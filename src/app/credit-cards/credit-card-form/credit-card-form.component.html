@@ -1,0 +1,49 @@
+<h2 mat-dialog-title>{{ isEdit ? 'עריכת כרטיס' : 'הוספת כרטיס אשראי' }}</h2>
+<mat-dialog-content>
+    <form [formGroup]="cardForm" class="form-container">
+        <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>שם הכרטיס</mat-label>
+                <input matInput formControlName="displayName" placeholder="למשל: ויזה כאל, מאסטרקארד">
+                @if (cardForm.get('displayName')?.hasError('required')) {
+                <mat-error>שדה חובה</mat-error>
+                }
+            </mat-form-field>
+        </div>
+
+        <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>יום חיוב בחודש</mat-label>
+                <input matInput type="number" formControlName="monthlyChargeDate" min="1" max="31">
+                <mat-hint>1-31</mat-hint>
+                @if (cardForm.get('monthlyChargeDate')?.hasError('required')) {
+                <mat-error>שדה חובה</mat-error>
+                }
+            </mat-form-field>
+        </div>
+
+        <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>חשבון לחיוב</mat-label>
+                <mat-select formControlName="chargeAccountId">
+                    @for (account of data.accounts; track account.id) {
+                    <mat-option [value]="account.id">{{ account.name }}</mat-option>
+                    }
+                </mat-select>
+                @if (cardForm.get('chargeAccountId')?.hasError('required')) {
+                <mat-error>שדה חובה</mat-error>
+                }
+            </mat-form-field>
+        </div>
+
+        <div class="form-row">
+            <mat-checkbox formControlName="isVirtual">כרטיס וירטואלי</mat-checkbox>
+        </div>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()">ביטול</button>
+    <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="!cardForm.valid">
+        {{ isEdit ? 'עדכן' : 'שמור' }}
+    </button>
+</mat-dialog-actions>

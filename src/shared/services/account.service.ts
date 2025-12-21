@@ -37,7 +37,7 @@ export class AccountService {
         const newAccount: IAccount = {
             ...accountData,
             id: this.generateId(),
-            ownerIds: accountData.ownerIds.length > 0 ? accountData.ownerIds : [this.userService.user().id]
+            ownerIds: accountData.ownerIds?.length ? accountData.ownerIds : [this.userService.user().id]
         };
 
         return this.getAccounts().pipe(

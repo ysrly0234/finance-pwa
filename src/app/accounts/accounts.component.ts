@@ -7,6 +7,8 @@ import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatChipsModule } from '@angular/material/chips';
 import { IAccount } from '../../shared/models/account.model';
 import { AccountService } from '../../shared/services/account.service';
+import { AccountFormComponent } from './account-form/account-form.component';
+import { ConfirmationDialogComponent } from '../../shared/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-accounts',
@@ -45,28 +47,54 @@ export class AccountsComponent implements OnInit {
   }
 
   onCreate() {
-    // TODO: Open dialog for creating account
-    console.log('Create account');
+    const dialogRef = this.dialog.open(AccountFormComponent, {
+      width: '400px',
+      data: {}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.accountService.createAccount(result).subscribe(() => this.loadAccounts());
+      }
+    });
   }
 
   onEdit(account: IAccount) {
-    // TODO: Open dialog for editing account
-    console.log('Edit account', account);
+    const dialogRef = this.dialog.open(AccountFormComponent, {
+      width: '400px',
+      data: { account }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.accountService.updateAccount({ ...account, ...result }).subscribe(() => this.loadAccounts());
+      }
+    });
   }
 
   onDelete(id: string) {
-    if (confirm('האם אתה בטוח שברצונך למחוק חשבון זה?')) {
-      this.isLoading.set(true);
-      this.accountService.deleteAccount(id).subscribe({
-        next: () => {
-          this.loadAccounts();
-        },
-        error: (err) => {
-          console.error('Error deleting account', err);
-          this.isLoading.set(false);
-        }
-      });
-    }
+    const account = this.accounts().find(a => a.id === id);
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        title: 'מחיקת חשבון',
+        message: `האם אתה בטוח שברצונך למחוק את החשבון "${account?.name}"?`
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.isLoading.set(true);
+        this.accountService.deleteAccount(id).subscribe({
+          next: () => {
+            this.loadAccounts();
+          },
+          error: (err) => {
+            console.error('Error deleting account', err);
+            this.isLoading.set(false);
+          }
+        });
+      }
+    });
   }
 
   getAccountTypeName(account: IAccount): string {

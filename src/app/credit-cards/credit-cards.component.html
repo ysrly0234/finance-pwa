@@ -1,1 +1,41 @@
-<p>credit-cards works!</p>
+<div class="page-header">
+    <h1>כרטיסי אשראי</h1>
+    <button mat-fab color="primary" (click)='openAddDialog()' title="הוספת כרטיס">
+        <mat-icon>add</mat-icon>
+    </button>
+</div>
+
+<div class="cards-grid">
+    @for (card of creditCards(); track card.id) {
+    <mat-card class="credit-card-item">
+        <mat-card-header>
+            <div mat-card-avatar class="card-icon">
+                <mat-icon>{{ card.isVirtual ? 'vignette' : 'credit_card' }}</mat-icon>
+            </div>
+            <mat-card-title>{{ card.displayName }}</mat-card-title>
+            <mat-card-subtitle>חיוב ב-{{ card.monthlyChargeDate }} בחודש</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+            <div class="card-details">
+                <p><strong>חשבון לחיוב:</strong> {{ getAccountName(card.chargeAccountId) }}</p>
+                <p><strong>סוג:</strong> {{ card.isVirtual ? 'וירטואלי' : 'פיזי' }}</p>
+            </div>
+        </mat-card-content>
+
+        <mat-card-actions align="end">
+            <button mat-icon-button color="primary" (click)="openEditDialog(card)" title="עריכה">
+                <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="deleteCard(card)" title="מחיקה">
+                <mat-icon>delete</mat-icon>
+            </button>
+        </mat-card-actions>
+    </mat-card>
+    } @empty {
+    <div class="empty-state">
+        <mat-icon class="huge-icon">credit_card_off</mat-icon>
+        <p>טרם הוגדרו כרטיסי אשראי. לחץ על ה-+ כדי להוסיף.</p>
+    </div>
+    }
+</div>

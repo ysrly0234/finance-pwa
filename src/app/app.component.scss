@@ -26,6 +26,7 @@
 .nav-links {
     display: flex;
     gap: var(--spacing-md);
+    align-items: center;
 }
 
 .nav-links a {
@@ -33,6 +34,9 @@
     color: var(--text-muted);
     font-weight: 500;
     transition: color var(--transition-fast);
+    line-height: var(--spacing-xl);
+    display: flex;
+    align-items: center;
 }
 
 .nav-links a:hover,

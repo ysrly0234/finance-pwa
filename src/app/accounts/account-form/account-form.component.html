@@ -1,0 +1,38 @@
+<h2 mat-dialog-title>{{ isEdit ? 'עריכת חשבון' : 'הוספת חשבון חדש' }}</h2>
+<mat-dialog-content>
+    <form [formGroup]="accountForm" class="form-container">
+        <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>שם החשבון</mat-label>
+                <input matInput formControlName="name" placeholder="למשל: חשבון עו״ש לאומי">
+                @if (accountForm.get('name')?.hasError('required')) {
+                <mat-error>שדה חובה</mat-error>
+                }
+            </mat-form-field>
+        </div>
+
+        <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>סוג חשבון / בנק</mat-label>
+                <mat-select formControlName="accountType" [compareWith]="compareAccountTypes">
+                    @for (type of accountTypes; track type.id) {
+                    <mat-option [value]="type">
+                        <div class="type-option">
+                            <span>{{ type.name }}</span>
+                        </div>
+                    </mat-option>
+                    }
+                </mat-select>
+                @if (accountForm.get('accountType')?.hasError('required')) {
+                <mat-error>שדה חובה</mat-error>
+                }
+            </mat-form-field>
+        </div>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()">ביטול</button>
+    <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="!accountForm.valid">
+        {{ isEdit ? 'עדכן' : 'שמור' }}
+    </button>
+</mat-dialog-actions>
