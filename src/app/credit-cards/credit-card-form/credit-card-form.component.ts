@@ -40,7 +40,7 @@ export class CreditCardFormComponent implements OnInit {
         displayName: ['', [Validators.required, Validators.maxLength(50)]],
         monthlyChargeDate: [10, [Validators.required, Validators.min(1), Validators.max(31)]],
         chargeAccountId: ['', [Validators.required]],
-        expiryDate: ['', [Validators.pattern(/^(0[1-9]|1[0-2])\/\d{2}$/)]], // MM/YY
+        expiryDate: ['', [Validators.pattern(/^(0[1-9]|1[0-2])\/\d{4}$/)]], // MM/YYYY
         isVirtual: [false]
     });
 

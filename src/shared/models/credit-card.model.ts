@@ -16,5 +16,5 @@ export interface ICreditCard {
     status: CreditCardStatus;
     cancellationReason?: CreditCardCancellationReason;
     cancellationNote?: string;
-    expiryDate?: string; // MM/YY
+    expiryDate?: string; // MM/YYYY
 }

@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, of, map } from 'rxjs';
-import { CreditCardCancellationReason, ICreditCard } from '../models/credit-card.model';
+import { CreditCardCancellationReason, ICreditCard, CreditCardStatus } from '../models/credit-card.model';
 import { StorageService } from './storage.service';
 
 @Injectable({
@@ -12,7 +12,28 @@ export class CreditCardService {
 
     getCreditCards(): Observable<ICreditCard[]> {
         return this.storage.getItem<ICreditCard[]>(this.STORAGE_KEY).pipe(
-            map(cards => cards || [])
+            map(cards => {
+                if (!cards) return [];
+
+                let hasChanges = false;
+                const updatedCards = cards.map(card => {
+                    if (card.status === 'active' && card.expiryDate && this.isExpired(card.expiryDate)) {
+                        hasChanges = true;
+                        return {
+                            ...card,
+                            status: 'inactive' as CreditCardStatus,
+                            cancellationReason: CreditCardCancellationReason.EXPIRED
+                        };
+                    }
+                    return card;
+                });
+
+                if (hasChanges) {
+                    this.storage.setItem(this.STORAGE_KEY, updatedCards).subscribe();
+                }
+
+                return updatedCards;
+            })
         );
     }
 
@@ -55,6 +76,12 @@ export class CreditCardService {
             map(cards => {
                 const index = cards.findIndex(c => c.id === id);
                 if (index !== -1) {
+                    const card = cards[index];
+
+                    if (card.expiryDate && this.isExpired(card.expiryDate)) {
+                        throw new Error('אי אפשר להפעיל מחדש כרטיס אשראי שתאריך התוקף שלו חלף');
+                    }
+
                     const updatedCards = [...cards];
                     updatedCards[index] = {
                         ...updatedCards[index],
@@ -107,6 +134,20 @@ export class CreditCardService {
                 this.storage.setItem(this.STORAGE_KEY, updatedCards).subscribe();
             })
         );
+    }
+
+    private isExpired(expiryDate: string): boolean {
+        const [month, year] = expiryDate.split('/').map(Number);
+        if (!month || !year) return false;
+
+        const now = new Date();
+        const currentYear = now.getFullYear();
+        const currentMonth = now.getMonth() + 1; // getMonth() is 0-indexed
+
+        if (year < currentYear) return true;
+        if (year === currentYear && month < currentMonth) return true;
+
+        return false;
     }
 
     private generateId(): string {

@@ -21,10 +21,10 @@
                 }
             </mat-form-field>
             <mat-form-field appearance="outline">
-                <mat-label>תוקף (MM/YY)</mat-label>
-                <input matInput formControlName="expiryDate" placeholder="05/28">
+                <mat-label>תוקף (MM/YYYY)</mat-label>
+                <input matInput formControlName="expiryDate" placeholder="05/2028" dir="ltr">
                 @if (cardForm.get('expiryDate')?.hasError('pattern')) {
-                <mat-error>פורמט לא תקין (MM/YY)</mat-error>
+                <mat-error>פורמט לא תקין (MM/YYYY)</mat-error>
                 }
             </mat-form-field>
         </div>
