@@ -14,6 +14,9 @@
                 <div class="label">הכנסות החודש</div>
                 <div class="value">{{ currentMonthStats().income | currency:'ILS':'symbol':'1.0-0' }}</div>
             </div>
+            <button mat-mini-fab class="action-btn" (click)="quickAddTransaction('income')" title="הוספת הכנסה">
+                <mat-icon>add</mat-icon>
+            </button>
         </div>
 
         <div class="card expense">
@@ -24,6 +27,9 @@
                 <div class="label">הוצאות החודש</div>
                 <div class="value">{{ currentMonthStats().expense | currency:'ILS':'symbol':'1.0-0' }}</div>
             </div>
+            <button mat-mini-fab class="action-btn" (click)="quickAddTransaction('expense')" title="הוספת הוצאה">
+                <mat-icon>add</mat-icon>
+            </button>
         </div>
     </div>
 
@@ -32,6 +38,10 @@
         <mat-card class="chart-card">
             <mat-card-header>
                 <mat-card-title>הכנסות מול הוצאות (חצי שנה)</mat-card-title>
+                <span class="spacer"></span>
+                <button mat-icon-button (click)="goToTransactions()" title="לכל התנועות">
+                    <mat-icon>list_alt</mat-icon>
+                </button>
             </mat-card-header>
             <mat-card-content>
                 <div class="canvas-container">
@@ -44,6 +54,10 @@
         <mat-card class="chart-card">
             <mat-card-header>
                 <mat-card-title>הוצאות לפי תקציב (החודש)</mat-card-title>
+                <span class="spacer"></span>
+                <button mat-icon-button (click)="goToBudgets()" title="ניהול תקציבים">
+                    <mat-icon>settings</mat-icon>
+                </button>
             </mat-card-header>
             <mat-card-content>
                 <div class="canvas-container">
@@ -56,7 +70,10 @@
 
     <!-- Recent Transactions -->
     <div class="recent-section">
-        <h3>פעולות אחרונות</h3>
+        <div class="section-header">
+            <h3>פעולות אחרונות</h3>
+            <button mat-button color="primary" (click)="goToTransactions()">לכל הפעולות</button>
+        </div>
         <div class="transactions-list">
             @for (t of recentTransactions(); track t.id) {
             <div class="transaction-item">

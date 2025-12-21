@@ -4,7 +4,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { RouterModule } from '@angular/router';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { Router, RouterModule } from '@angular/router';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
 import { AccountService } from '../../shared/services/account.service';
@@ -13,6 +14,7 @@ import { TransactionService } from '../../shared/services/transaction.service';
 import { BudgetService } from '../../shared/services/budget.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { IExpense, IIncome } from '../../shared/models/transaction.model';
+import { TransactionFormComponent, TransactionFormData } from '../transactions/transaction-form/transaction-form.component';
 
 @Component({
   selector: 'app-overview',
@@ -23,6 +25,7 @@ import { IExpense, IIncome } from '../../shared/models/transaction.model';
     MatIconModule,
     MatButtonModule,
     MatProgressBarModule,
+    MatDialogModule,
     RouterModule,
     BaseChartDirective
   ],
@@ -34,6 +37,8 @@ export class OverviewComponent {
   private cardService = inject(CreditCardService);
   private transactionService = inject(TransactionService);
   private budgetService = inject(BudgetService);
+  private dialog = inject(MatDialog);
+  private router = inject(Router);
 
   accounts = toSignal(this.accountService.getAccounts(), { initialValue: [] });
   cards = toSignal(this.cardService.getCreditCards(), { initialValue: [] });
@@ -48,14 +53,7 @@ export class OverviewComponent {
   // --- Summary Cards Logic ---
 
   totalBalance = computed(() => {
-    // Note: IAccount doesn't have a balance field in the interface provided earlier,
-    // assuming it might have 'balance' or we sum something else.
-    // Based on previous error, IAccount has NO balance.
-    // I will sum Income - Expense of all time? Or just display 0/Placeholder if data missing.
-    // For now, let's sum up all accounts if they had initial balance??
-    // Actually, Accounts usually have a balance. If the model is missing it, I used 0 previously.
-    // I'll stick to 0 to avoid error until model is fixed.
-    return 0;
+    return 0; // Placeholder as discussed
   });
 
   currentMonthStats = computed(() => {
@@ -75,6 +73,38 @@ export class OverviewComponent {
 
     return { income, expense };
   });
+
+  // --- Actions ---
+
+  quickAddTransaction(type: 'expense' | 'income') {
+    const dialogRef = this.dialog.open(TransactionFormComponent, {
+      data: {
+        type,
+        accounts: this.accounts(),
+        creditCards: this.cards().filter(c => c.status === 'active'),
+        budgets: this.budgets()
+      } as TransactionFormData,
+      width: '500px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (result.type === 'expense') {
+          this.transactionService.createExpense(result.data).subscribe();
+        } else {
+          this.transactionService.createIncome(result.data).subscribe();
+        }
+      }
+    });
+  }
+
+  goToTransactions() {
+    this.router.navigate(['/transactions']);
+  }
+
+  goToBudgets() {
+    this.router.navigate(['/budgets']);
+  }
 
   // --- Bar Chart: Income vs Expenses (Last 6 Months) ---
 
