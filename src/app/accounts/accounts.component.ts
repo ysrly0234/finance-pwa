@@ -5,18 +5,15 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatChipsModule } from '@angular/material/chips';
-import { IAccount } from '../../../shared/models/account.model';
-import { AccountService } from '../../../shared/services/account.service';
+import { IAccount } from '../../shared/models/account.model';
+import { AccountService } from '../../shared/services/account.service';
 
 @Component({
   selector: 'app-accounts',
   standalone: true,
   imports: [
     CommonModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatDialogModule,
+    MatCardModule, MatButtonModule, MatIconModule, MatDialogModule,
     MatChipsModule
   ],
   templateUrl: './accounts.component.html',

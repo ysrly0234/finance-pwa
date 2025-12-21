@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
 import { OverviewDashboardComponent } from './overview-dashboard/overview-dashboard.component';
 import { ManageBudgetsComponent } from './manage-budgets/manage-budgets.component';
-import { ProfileComponent } from './app/profile/profile.component';
-import { AccountsComponent } from './app/accounts/accounts.component';
-import { CreditCardsComponent } from './app/credit-cards/credit-cards.component';
-import { TransactionsComponent } from './app/transactions/transactions.component';
+import { ProfileComponent } from './profile/profile.component';
+import { AccountsComponent } from './accounts/accounts.component';
+import { CreditCardsComponent } from './credit-cards/credit-cards.component';
+import { TransactionsComponent } from './transactions/transactions.component';
 
 export const routes: Routes = [
     { path: '', component: OverviewDashboardComponent },

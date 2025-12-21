@@ -7,7 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatCardModule } from '@angular/material/card';
-import { UserService } from '../../../shared/services/user.service';
+import { UserService } from '../../shared/services/user.service';
 
 @Component({
   selector: 'app-profile',
