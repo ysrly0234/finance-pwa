@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -38,15 +38,19 @@ export class ProfileComponent implements OnInit {
 
   displayName = this.userService.displayName;
 
-  ngOnInit(): void {
-    const user = this.userService.user();
-    this.profileForm.patchValue({
-      firstName: user.firstName,
-      lastName: user.lastName || '',
-      dateOfBirth: user.dateOfBirth || null,
-      nickname: user.nickname || ''
+  constructor() {
+    effect(() => {
+      const user = this.userService.user();
+      this.profileForm.patchValue({
+        firstName: user.firstName,
+        lastName: user.lastName || '',
+        dateOfBirth: user.dateOfBirth || null,
+        nickname: user.nickname || ''
+      }, { emitEvent: false });
     });
   }
+
+  ngOnInit(): void { }
 
   onSubmit() {
     if (this.profileForm.valid) {

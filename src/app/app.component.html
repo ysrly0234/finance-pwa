@@ -1,4 +1,5 @@
 <div class="app-container">
+  @if (isAuthenticated()) {
   <nav class="navbar">
     <div class="container navbar-content">
       <a routerLink="/" class="brand">Finance PWA</a>
@@ -9,9 +10,13 @@
         <a routerLink="/accounts" routerLinkActive="active">חשבונות</a>
         <a routerLink="/credit-cards" routerLinkActive="active">כרטיסי אשראי</a>
         <a routerLink="/profile" routerLinkActive="active">פרופיל</a>
+        <button mat-icon-button (click)="logout()" title="התנתקות">
+          <mat-icon>logout</mat-icon>
+        </button>
       </div>
     </div>
   </nav>
+  }
 
   <main class="container main-content">
     <router-outlet></router-outlet>

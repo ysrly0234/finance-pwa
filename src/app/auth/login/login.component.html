@@ -1,0 +1,50 @@
+<div class="auth-container">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>התחברות</mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                <div class="form-row">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>אימייל</mat-label>
+                        <input matInput type="email" formControlName="email" required>
+                        @if (loginForm.get('email')?.hasError('required')) {
+                        <mat-error>שדה חובה</mat-error>
+                        }
+                        @if (loginForm.get('email')?.hasError('email')) {
+                        <mat-error>אימייל לא תקין</mat-error>
+                        }
+                    </mat-form-field>
+                </div>
+
+                <div class="form-row">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>סיסמה</mat-label>
+                        <input matInput type="password" formControlName="password" required>
+                        @if (loginForm.get('password')?.hasError('required')) {
+                        <mat-error>שדה חובה</mat-error>
+                        }
+                    </mat-form-field>
+                </div>
+
+                @if (errorMsg()) {
+                <div class="error-banner">{{ errorMsg() }}</div>
+                }
+
+                <div class="form-actions">
+                    <button mat-raised-button color="primary" type="submit" [disabled]="!loginForm.valid">
+                        התחבר
+                    </button>
+                </div>
+            </form>
+        </mat-card-content>
+
+        <mat-card-footer>
+            <p class="auth-footer">
+                אין לך חשבון? <a routerLink="/auth/register">הרשמה</a>
+            </p>
+        </mat-card-footer>
+    </mat-card>
+</div>
