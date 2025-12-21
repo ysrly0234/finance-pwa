@@ -1,46 +1,49 @@
-<div class="budget-list">
+<div class="budgets-list">
     @if (budgets().length === 0) {
     <div class="empty-state">
-        <p>No budgets found. Create one to get started!</p>
+        <mat-icon class="large-icon">payments</mat-icon>
+        <p>אין תקציבים להצגה. צור אחד כדי להתחיל!</p>
     </div>
     }
 
     @for (budget of budgets(); track budget.id) {
-    <mat-card class="budget-card">
-        <mat-card-header>
-            <mat-card-title>{{ budget.name }}</mat-card-title>
-            <mat-card-subtitle>
-                <mat-chip-set>
-                    <mat-chip [class]="'importance-' + budget.importance">{{ budget.importance }}</mat-chip>
-                </mat-chip-set>
-            </mat-card-subtitle>
-        </mat-card-header>
-
-        <mat-card-content>
-            @if (budget.description) {
-            <p class="budget-desc">{{ budget.description }}</p>
-            }
-
+    <div class="budget-item-card">
+        <div class="budget-main-info">
+            <div class="budget-icon" [class]="'importance-' + budget.importance">
+                <mat-icon>payments</mat-icon>
+            </div>
             <div class="budget-details">
-                <div class="detail-item">
-                    <span class="label">Amount:</span>
-                    <span class="value">{{ budget.amount | currency }}</span>
+                <div class="title-row">
+                    <span class="budget-name">{{ budget.name }}</span>
+                    <span class="importance-badge" [class]="'importance-' + budget.importance">
+                        {{ budget.importance === 'high' ? 'גבוהה' : (budget.importance === 'medium' ? 'בינונית' :
+                        'נמוכה')
+                        }}
+                    </span>
                 </div>
-                <div class="detail-item">
-                    <span class="label">Cycle:</span>
-                    <span class="value">{{ getCycleLabel(budget) }}</span>
-                </div>
-                <div class="detail-item">
-                    <span class="label">Accumulating:</span>
-                    <span class="value">{{ budget.isAccumulating ? 'Yes' : 'No' }}</span>
+                <div class="subtitle-row">
+                    <span class="cycle-text">{{ getCycleLabel(budget) }}</span>
+                    @if (budget.isAccumulating) {
+                    <span class="separator">•</span>
+                    <span class="accumulating-text">צבור</span>
+                    }
                 </div>
             </div>
-        </mat-card-content>
+        </div>
 
-        <mat-card-actions align="end">
-            <button mat-button (click)="onEdit(budget)">Edit</button>
-            <button mat-button color="warn" (click)="onDelete(budget.id)">Delete</button>
-        </mat-card-actions>
-    </mat-card>
+        <div class="budget-amount-section">
+            <span class="amount-value">{{ budget.amount | currency:'ILS':'symbol':'1.0-0' }}</span>
+            <span class="amount-label">תקציב</span>
+        </div>
+
+        <div class="budget-actions">
+            <button mat-icon-button (click)="onEdit(budget)" title="ערוך">
+                <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="onDelete(budget.id)" title="מחק">
+                <mat-icon>delete</mat-icon>
+            </button>
+        </div>
+    </div>
     }
 </div>

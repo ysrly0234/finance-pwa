@@ -1,6 +1,9 @@
 <div class="accounts-container">
     <div class="header">
-        <h1>חשבונות</h1>
+        <div class="title-section">
+            <h1>חשבונות</h1>
+            <mat-slide-toggle [(ngModel)]="showInactive">הצג חשבונות לא פעילים</mat-slide-toggle>
+        </div>
         <button mat-raised-button color="primary" (click)="onCreate()">
             <mat-icon>add</mat-icon>
             הוסף חשבון
@@ -8,36 +11,52 @@
     </div>
 
     @if (isLoading()) {
-    <div class="loading">טוען...</div>
+    <div class="loading-overlay">
+        <mat-spinner diameter="40"></mat-spinner>
+    </div>
     }
 
-    <div class="accounts-grid">
-        @if (accounts().length === 0 && !isLoading()) {
+    <div class="accounts-list">
+        @if (filteredAccounts().length === 0 && !isLoading()) {
         <div class="empty-state">
-            <p>לא נמצאו חשבונות. הוסף חשבון ראשון!</p>
+            <mat-icon class="large-icon">account_balance</mat-icon>
+            <p>אין חשבונות להצגה.</p>
         </div>
         }
 
-        @for (account of accounts(); track account.id) {
-        <mat-card class="account-card">
-            <mat-card-header>
-                <mat-card-title>{{ account.name }}</mat-card-title>
-                <mat-card-subtitle>
-                    <mat-chip>{{ getAccountTypeName(account) }}</mat-chip>
-                </mat-card-subtitle>
-            </mat-card-header>
+        @for (account of filteredAccounts(); track account.id) {
+        <div class="account-item-card" [class.is-inactive]="account.status === 'inactive'">
+            <div class="account-main-info">
+                <div class="account-icon">
+                    <mat-icon>{{ account.accountType?.category === 'bank' ? 'account_balance' : 'account_balance_wallet'
+                        }}</mat-icon>
+                </div>
+                <div class="account-details">
+                    <div class="title-row">
+                        <span class="account-name">{{ account.name }}</span>
+                        @if (account.status === 'inactive') {
+                        <span class="status-chip">לא פעיל</span>
+                        }
+                    </div>
+                    <span class="account-type-label">{{ getAccountTypeName(account) }}</span>
+                </div>
+            </div>
 
-            <mat-card-actions align="end">
-                <button mat-button (click)="onEdit(account)">
+            <div class="account-actions">
+                <button mat-icon-button (click)="onEdit(account)" title="ערוך">
                     <mat-icon>edit</mat-icon>
-                    ערוך
                 </button>
-                <button mat-button color="warn" (click)="onDelete(account.id)">
+
+                @if (account.status === 'active') {
+                <button mat-icon-button color="warn" (click)='onCloseAccount(account)' title="הפוך ללא פעיל">
+                    <mat-icon>block</mat-icon>
+                </button>
+                }
+                <button mat-icon-button color="warn" (click)="onDelete(account.id)" title="מחק">
                     <mat-icon>delete</mat-icon>
-                    מחק
                 </button>
-            </mat-card-actions>
-        </mat-card>
+            </div>
+        </div>
         }
     </div>
 </div>

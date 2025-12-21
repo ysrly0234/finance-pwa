@@ -1,9 +1,12 @@
 <div class="manage-budgets-container">
     <div class="header">
-        <h1>Manage Budgets</h1>
+        <div class="title-section">
+            <h1>ניהול תקציבים</h1>
+        </div>
         @if (!showForm()) {
         <button mat-raised-button color="primary" (click)="onCreate()">
-            + Create New Budget
+            <mat-icon>add</mat-icon>
+            צור תקציב חדש
         </button>
         }
     </div>

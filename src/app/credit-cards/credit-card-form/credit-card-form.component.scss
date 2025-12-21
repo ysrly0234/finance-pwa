@@ -1,14 +1,47 @@
 .form-container {
     display: flex;
     flex-direction: column;
-    padding: 1rem 0;
+    padding-top: 1rem;
+    gap: 0.5rem;
+    min-width: 350px;
+
+    @media (max-width: 500px) {
+        min-width: 100%;
+    }
+}
+
+.form-row {
+    display: flex;
     gap: 1rem;
+    width: 100%;
+
+    &.split-row {
+        flex-wrap: wrap;
+
+        &>mat-form-field {
+            flex: 1 1 calc(50% - 0.5rem);
+            min-width: 150px;
+        }
+    }
 }
 
 .full-width {
     width: 100%;
 }
 
-.form-row {
-    width: 100%;
+.stretch-field {
+    flex: 1;
+}
+
+// Fix cut-off labels in RTL outline fields
+:host ::ng-deep .mat-mdc-form-field-label-wrapper {
+    overflow: visible !important;
+}
+
+:host ::ng-deep .mat-mdc-text-field-wrapper {
+    width: 100% !important;
+}
+
+mat-checkbox {
+    margin: 0.5rem 0;
 }

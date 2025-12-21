@@ -1,12 +1,16 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, OnInit, signal, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
+import { MatButtonModule, MatIconButton } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatDialogModule, MatDialog } from '@angular/material/dialog';
-import { MatChipsModule } from '@angular/material/chips';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { FormsModule } from '@angular/forms';
 import { IAccount } from '../../shared/models/account.model';
 import { AccountService } from '../../shared/services/account.service';
+import { CreditCardService } from '../../shared/services/credit-card.service';
 import { AccountFormComponent } from './account-form/account-form.component';
 import { ConfirmationDialogComponent } from '../../shared/components/confirmation-dialog/confirmation-dialog.component';
 
@@ -15,18 +19,32 @@ import { ConfirmationDialogComponent } from '../../shared/components/confirmatio
   standalone: true,
   imports: [
     CommonModule,
-    MatCardModule, MatButtonModule, MatIconModule, MatDialogModule,
-    MatChipsModule
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatDialogModule,
+    MatSlideToggleModule,
+    MatSnackBarModule,
+    MatProgressSpinnerModule,
+    FormsModule
   ],
   templateUrl: './accounts.component.html',
   styleUrl: './accounts.component.scss'
 })
 export class AccountsComponent implements OnInit {
   private accountService = inject(AccountService);
+  private creditCardService = inject(CreditCardService);
   private dialog = inject(MatDialog);
+  private snackBar = inject(MatSnackBar);
 
   accounts = signal<IAccount[]>([]);
   isLoading = signal(false);
+  showInactive = signal(false);
+
+  filteredAccounts = computed(() => {
+    const accs = this.accounts();
+    return this.showInactive() ? accs : accs.filter(a => a.status === 'active');
+  });
 
   ngOnInit(): void {
     this.loadAccounts();
@@ -49,7 +67,7 @@ export class AccountsComponent implements OnInit {
   onCreate() {
     const dialogRef = this.dialog.open(AccountFormComponent, {
       width: '400px',
-      data: {}
+      data: { account: null }
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -72,32 +90,66 @@ export class AccountsComponent implements OnInit {
     });
   }
 
+  onCloseAccount(account: IAccount) {
+    this.creditCardService.hasActiveCards(account.id).subscribe(hasActive => {
+      if (hasActive) {
+        this.snackBar.open('אי אפשר להפוך חשבון ללא פעיל כל עוד מקושרים אליו כרטיסי אשראי פעילים', 'סגור', { duration: 5000 });
+        return;
+      }
+
+      const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+        data: {
+          title: 'סימון חשבון כלא פעיל',
+          message: `האם אתה בטוח שברצונך להפוך את החשבון "${account.name}" ללא פעיל?`
+        }
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.accountService.closeAccount(account.id).subscribe({
+            next: () => this.loadAccounts(),
+            error: (err) => this.snackBar.open(err.message, 'סגור', { duration: 5000 })
+          });
+        }
+      });
+    });
+  }
+
   onDelete(id: string) {
     const account = this.accounts().find(a => a.id === id);
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      data: {
-        title: 'מחיקת חשבון',
-        message: `האם אתה בטוח שברצונך למחוק את החשבון "${account?.name}"?`
-      }
-    });
+    if (!account) return;
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.isLoading.set(true);
-        this.accountService.deleteAccount(id).subscribe({
-          next: () => {
-            this.loadAccounts();
-          },
-          error: (err) => {
-            console.error('Error deleting account', err);
-            this.isLoading.set(false);
-          }
-        });
+    this.creditCardService.hasAnyCards(id).subscribe(hasCards => {
+      if (hasCards) {
+        this.snackBar.open('אי אפשר למחוק חשבון שמקושר אליו כרטיס אשראי', 'סגור', { duration: 5000 });
+        return;
       }
+
+      const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+        data: {
+          title: 'מחיקת חשבון',
+          message: `האם אתה בטוח שברצונך למחוק לצמיתות את החשבון "${account.name}"?`
+        }
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.isLoading.set(true);
+          this.accountService.deleteAccount(id).subscribe({
+            next: () => {
+              this.loadAccounts();
+            },
+            error: (err) => {
+              this.snackBar.open(err.message, 'סגור', { duration: 5000 });
+              this.isLoading.set(false);
+            }
+          });
+        }
+      });
     });
   }
 
   getAccountTypeName(account: IAccount): string {
-    return account.accountType?.name || 'לא צוין';
+    return account.accountType?.name || 'ללא סוג';
   }
 }

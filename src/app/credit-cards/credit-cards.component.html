@@ -1,41 +1,88 @@
 <div class="page-header">
-    <h1>כרטיסי אשראי</h1>
-    <button mat-fab color="primary" (click)='openAddDialog()' title="הוספת כרטיס">
+    <div class="title-section">
+        <h1>כרטיסי אשראי</h1>
+        <mat-slide-toggle [(ngModel)]="showInactive">הצג כרטיסים לא פעילים</mat-slide-toggle>
+    </div>
+    <button mat-raised-button color="primary" (click)='openAddDialog()'>
         <mat-icon>add</mat-icon>
+        <span class="btn-text">הוסף כרטיס</span>
     </button>
 </div>
 
 <div class="cards-grid">
-    @for (card of creditCards(); track card.id) {
-    <mat-card class="credit-card-item">
-        <mat-card-header>
-            <div mat-card-avatar class="card-icon">
-                <mat-icon>{{ card.isVirtual ? 'vignette' : 'credit_card' }}</mat-icon>
-            </div>
-            <mat-card-title>{{ card.displayName }}</mat-card-title>
-            <mat-card-subtitle>חיוב ב-{{ card.monthlyChargeDate }} בחודש</mat-card-subtitle>
-        </mat-card-header>
+    @for (card of filteredCards(); track card.id) {
+    <div class="card-wrapper" [class.is-inactive]="card.status === 'inactive'">
+        <div class="real-credit-card" [class.virtual]="card.isVirtual">
+            <div class="card-glass"></div>
 
-        <mat-card-content>
-            <div class="card-details">
-                <p><strong>חשבון לחיוב:</strong> {{ getAccountName(card.chargeAccountId) }}</p>
-                <p><strong>סוג:</strong> {{ card.isVirtual ? 'וירטואלי' : 'פיזי' }}</p>
+            <div class="card-header">
+                <div class="chip"></div>
+                <div class="card-logo">
+                    <mat-icon>{{ card.isVirtual ? 'vignette' : 'credit_card' }}</mat-icon>
+                </div>
             </div>
-        </mat-card-content>
 
-        <mat-card-actions align="end">
-            <button mat-icon-button color="primary" (click)="openEditDialog(card)" title="עריכה">
-                <mat-icon>edit</mat-icon>
-            </button>
-            <button mat-icon-button color="warn" (click)="deleteCard(card)" title="מחיקה">
-                <mat-icon>delete</mat-icon>
-            </button>
-        </mat-card-actions>
-    </mat-card>
+            <div class="card-body">
+                <div class="card-number">•••• •••• •••• ••••</div>
+                <div class="card-footer">
+                    <div class="card-holder">
+                        <span class="label">בעל הכרטיס</span>
+                        <span class="value">{{ card.displayName }}</span>
+                    </div>
+                    <div class="card-expiry">
+                        <span class="label">תוקף</span>
+                        <span class="value">{{ card.expiryDate || '••/••' }}</span>
+                    </div>
+                </div>
+            </div>
+
+            @if (card.status === 'inactive') {
+            <div class="status-overlay">
+                <span class="status-badge">לא פעיל</span>
+            </div>
+            }
+        </div>
+
+        <div class="card-actions-bar">
+            <div class="card-info-summary">
+                <span>חיוב ב-{{ card.monthlyChargeDate }}</span>
+                <span class="separator">•</span>
+                <span>{{ getAccountName(card.chargeAccountId) }}</span>
+            </div>
+            <div class="actions">
+                <button mat-icon-button (click)="openEditDialog(card)" title="ערוך">
+                    <mat-icon>edit</mat-icon>
+                </button>
+
+                @if (card.status === 'active') {
+                <button mat-icon-button color="warn" (click)="cancelCard(card)" title="בטל">
+                    <mat-icon>block</mat-icon>
+                </button>
+                }
+                @if (card.status === 'inactive') {
+                <button mat-icon-button (click)="reactivateCard(card)" title="הפעל מחדש">
+                    <mat-icon>settings_backup_restore</mat-icon>
+                </button>
+                }
+                <button mat-icon-button color="warn" (click)="deleteCard(card)" title="מחק">
+                    <mat-icon>delete</mat-icon>
+                </button>
+            </div>
+        </div>
+
+        @if (card.status === 'inactive') {
+        <div class="cancellation-details">
+            <p><strong>סיבה:</strong> {{ getReasonLabel(card.cancellationReason) }}</p>
+            @if (card.cancellationNote) {
+            <p><strong>הערה:</strong> {{ card.cancellationNote }}</p>
+            }
+        </div>
+        }
+    </div>
     } @empty {
     <div class="empty-state">
         <mat-icon class="huge-icon">credit_card_off</mat-icon>
-        <p>טרם הוגדרו כרטיסי אשראי. לחץ על ה-+ כדי להוסיף.</p>
+        <p>אין כרטיסי אשראי להצגה.</p>
     </div>
     }
 </div>

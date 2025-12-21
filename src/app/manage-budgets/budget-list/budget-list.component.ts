@@ -48,11 +48,12 @@ export class BudgetListComponent {
   getCycleLabel(budget: IBudget): string {
     const { type, customValue, customUnit } = budget.cycle;
     switch (type) {
-      case 'monthly': return 'Monthly';
-      case 'bi-monthly': return 'Bi-Monthly';
-      case 'yearly': return 'Yearly';
+      case 'monthly': return 'חודשי';
+      case 'bi-monthly': return 'דו-חודשי';
+      case 'yearly': return 'שנתי';
       case 'custom':
-        return `Every ${customValue} ${customUnit}${customValue! > 1 ? 's' : ''}`;
+        const unitLabel = customUnit === 'month' ? 'חודשים' : 'שנים';
+        return `כל ${customValue} ${unitLabel}`;
       default: return '';
     }
   }

@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, of, map } from 'rxjs';
-import { ICreditCard } from '../models/credit-card.model';
+import { CreditCardCancellationReason, ICreditCard } from '../models/credit-card.model';
 import { StorageService } from './storage.service';
 
 @Injectable({
@@ -16,10 +16,11 @@ export class CreditCardService {
         );
     }
 
-    createCreditCard(cardData: Omit<ICreditCard, 'id'>): Observable<ICreditCard> {
+    createCreditCard(cardData: Omit<ICreditCard, 'id' | 'status'>): Observable<ICreditCard> {
         const newCard: ICreditCard = {
             ...cardData,
-            id: this.generateId()
+            id: this.generateId(),
+            status: 'active'
         };
 
         return this.getCreditCards().pipe(
@@ -28,6 +29,60 @@ export class CreditCardService {
                 this.storage.setItem(this.STORAGE_KEY, updatedCards).subscribe();
                 return newCard;
             })
+        );
+    }
+
+    cancelCreditCard(id: string, reason: CreditCardCancellationReason, note?: string): Observable<void> {
+        return this.getCreditCards().pipe(
+            map(cards => {
+                const index = cards.findIndex(c => c.id === id);
+                if (index !== -1) {
+                    const updatedCards = [...cards];
+                    updatedCards[index] = {
+                        ...updatedCards[index],
+                        status: 'inactive',
+                        cancellationReason: reason,
+                        cancellationNote: note
+                    };
+                    this.storage.setItem(this.STORAGE_KEY, updatedCards).subscribe();
+                }
+            })
+        );
+    }
+
+    reactivateCreditCard(id: string): Observable<void> {
+        return this.getCreditCards().pipe(
+            map(cards => {
+                const index = cards.findIndex(c => c.id === id);
+                if (index !== -1) {
+                    const updatedCards = [...cards];
+                    updatedCards[index] = {
+                        ...updatedCards[index],
+                        status: 'active',
+                        cancellationReason: undefined,
+                        cancellationNote: undefined
+                    };
+                    this.storage.setItem(this.STORAGE_KEY, updatedCards).subscribe();
+                }
+            })
+        );
+    }
+
+    getCardsByAccount(accountId: string): Observable<ICreditCard[]> {
+        return this.getCreditCards().pipe(
+            map(cards => cards.filter(c => c.chargeAccountId === accountId))
+        );
+    }
+
+    hasActiveCards(accountId: string): Observable<boolean> {
+        return this.getCardsByAccount(accountId).pipe(
+            map(cards => cards.some(c => c.status === 'active'))
+        );
+    }
+
+    hasAnyCards(accountId: string): Observable<boolean> {
+        return this.getCardsByAccount(accountId).pipe(
+            map(cards => cards.length > 0)
         );
     }
 

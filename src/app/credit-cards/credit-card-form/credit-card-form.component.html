@@ -2,7 +2,7 @@
 <mat-dialog-content>
     <form [formGroup]="cardForm" class="form-container">
         <div class="form-row">
-            <mat-form-field appearance="outline" class="full-width">
+            <mat-form-field appearance="outline" class="full-width stretch-field">
                 <mat-label>שם הכרטיס</mat-label>
                 <input matInput formControlName="displayName" placeholder="למשל: ויזה כאל, מאסטרקארד">
                 @if (cardForm.get('displayName')?.hasError('required')) {
@@ -11,19 +11,26 @@
             </mat-form-field>
         </div>
 
-        <div class="form-row">
-            <mat-form-field appearance="outline" class="full-width">
-                <mat-label>יום חיוב בחודש</mat-label>
+        <div class="form-row split-row">
+            <mat-form-field appearance="outline">
+                <mat-label>יום חיוב בחודש (1-31)</mat-label>
                 <input matInput type="number" formControlName="monthlyChargeDate" min="1" max="31">
                 <mat-hint>1-31</mat-hint>
                 @if (cardForm.get('monthlyChargeDate')?.hasError('required')) {
-                <mat-error>שדה חובה</mat-error>
+                <mat-error>חובה להזין יום חיוב</mat-error>
+                }
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>תוקף (MM/YY)</mat-label>
+                <input matInput formControlName="expiryDate" placeholder="05/28">
+                @if (cardForm.get('expiryDate')?.hasError('pattern')) {
+                <mat-error>פורמט לא תקין (MM/YY)</mat-error>
                 }
             </mat-form-field>
         </div>
 
         <div class="form-row">
-            <mat-form-field appearance="outline" class="full-width">
+            <mat-form-field appearance="outline" class="full-width stretch-field">
                 <mat-label>חשבון לחיוב</mat-label>
                 <mat-select formControlName="chargeAccountId">
                     @for (account of data.accounts; track account.id) {

@@ -3,6 +3,7 @@ import { Observable, of, map } from 'rxjs';
 import { IAccount, IAccountType } from '../models/account.model';
 import { StorageService } from './storage.service';
 import { UserService } from './user.service';
+import { CreditCardService } from './credit-card.service';
 
 @Injectable({
     providedIn: 'root'
@@ -10,6 +11,7 @@ import { UserService } from './user.service';
 export class AccountService {
     private storage = inject(StorageService);
     private userService = inject(UserService);
+    private creditCardService = inject(CreditCardService);
     private readonly STORAGE_KEY = 'accounts';
 
     // Hard-coded account types (will be moved to Firebase later)
@@ -33,11 +35,12 @@ export class AccountService {
         );
     }
 
-    createAccount(accountData: Omit<IAccount, 'id'>): Observable<IAccount> {
+    createAccount(accountData: Omit<IAccount, 'id' | 'status'>): Observable<IAccount> {
         const newAccount: IAccount = {
             ...accountData,
             id: this.generateId(),
-            ownerIds: accountData.ownerIds?.length ? accountData.ownerIds : [this.userService.user().id]
+            ownerIds: accountData.ownerIds?.length ? accountData.ownerIds : [this.userService.user().id],
+            status: 'active'
         };
 
         return this.getAccounts().pipe(
@@ -63,11 +66,38 @@ export class AccountService {
         );
     }
 
+    closeAccount(id: string): Observable<void> {
+        return this.creditCardService.hasActiveCards(id).pipe(
+            map(hasActive => {
+                if (hasActive) {
+                    throw new Error('אי אפשר להפוך חשבון ללא פעיל כשיש לו כרטיסי אשראי פעילים');
+                }
+            }),
+            map(() => {
+                this.getAccounts().subscribe(accounts => {
+                    const index = accounts.findIndex(a => a.id === id);
+                    if (index !== -1) {
+                        const updatedAccounts = [...accounts];
+                        updatedAccounts[index] = { ...updatedAccounts[index], status: 'inactive' };
+                        this.storage.setItem(this.STORAGE_KEY, updatedAccounts).subscribe();
+                    }
+                });
+            })
+        );
+    }
+
     deleteAccount(id: string): Observable<void> {
-        return this.getAccounts().pipe(
-            map(accounts => {
-                const updatedAccounts = accounts.filter(a => a.id !== id);
-                this.storage.setItem(this.STORAGE_KEY, updatedAccounts).subscribe();
+        return this.creditCardService.hasAnyCards(id).pipe(
+            map(hasCards => {
+                if (hasCards) {
+                    throw new Error('אי אפשר למחוק חשבון שמקושר אליו כרטיס אשראי');
+                }
+            }),
+            map(() => {
+                this.getAccounts().subscribe(accounts => {
+                    const updatedAccounts = accounts.filter(a => a.id !== id);
+                    this.storage.setItem(this.STORAGE_KEY, updatedAccounts).subscribe();
+                });
             })
         );
     }

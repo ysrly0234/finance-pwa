@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { BudgetListComponent } from './budget-list/budget-list.component';
 import { BudgetFormComponent } from './budget-form/budget-form.component';
+import { MatIconModule } from '@angular/material/icon';
 import { BudgetService } from '../../shared/services/budget.service';
 import { IBudget } from '../../shared/models/budget.model';
 import { Observable } from 'rxjs';
@@ -16,7 +17,8 @@ import { Observable } from 'rxjs';
     BudgetListComponent,
     BudgetFormComponent,
     MatButtonModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatIconModule
   ],
   templateUrl: './manage-budgets.component.html',
   styleUrl: './manage-budgets.component.scss'

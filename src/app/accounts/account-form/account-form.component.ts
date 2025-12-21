@@ -49,6 +49,10 @@ export class AccountFormComponent implements OnInit {
                 name: data.account.name,
                 accountType: data.account.accountType || null
             });
+
+            if (data.account.status === 'inactive') {
+                this.accountForm.get('accountType')?.disable();
+            }
         }
     }
 
