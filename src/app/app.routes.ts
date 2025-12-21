@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { OverviewDashboardComponent } from './overview-dashboard/overview-dashboard.component';
+import { OverviewComponent } from './overview/overview.component';
 import { ManageBudgetsComponent } from './manage-budgets/manage-budgets.component';
 import { ProfileComponent } from './profile/profile.component';
 import { AccountsComponent } from './accounts/accounts.component';
@@ -10,8 +10,7 @@ import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
 
 export const routes: Routes = [
-    { path: '', component: OverviewDashboardComponent, canActivate: [authGuard] },
-    { path: 'dashboard', component: OverviewDashboardComponent, canActivate: [authGuard] },
+    { path: '', component: OverviewComponent, canActivate: [authGuard] },
     { path: 'budgets', component: ManageBudgetsComponent, canActivate: [authGuard] },
     { path: 'accounts', component: AccountsComponent, canActivate: [authGuard] },
     { path: 'credit-cards', component: CreditCardsComponent, canActivate: [authGuard] },
