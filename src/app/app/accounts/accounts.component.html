@@ -1,0 +1,43 @@
+<div class="accounts-container">
+    <div class="header">
+        <h1>חשבונות</h1>
+        <button mat-raised-button color="primary" (click)="onCreate()">
+            <mat-icon>add</mat-icon>
+            הוסף חשבון
+        </button>
+    </div>
+
+    @if (isLoading()) {
+    <div class="loading">טוען...</div>
+    }
+
+    <div class="accounts-grid">
+        @if (accounts().length === 0 && !isLoading()) {
+        <div class="empty-state">
+            <p>לא נמצאו חשבונות. הוסף חשבון ראשון!</p>
+        </div>
+        }
+
+        @for (account of accounts(); track account.id) {
+        <mat-card class="account-card">
+            <mat-card-header>
+                <mat-card-title>{{ account.name }}</mat-card-title>
+                <mat-card-subtitle>
+                    <mat-chip>{{ getAccountTypeName(account) }}</mat-chip>
+                </mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-actions align="end">
+                <button mat-button (click)="onEdit(account)">
+                    <mat-icon>edit</mat-icon>
+                    ערוך
+                </button>
+                <button mat-button color="warn" (click)="onDelete(account.id)">
+                    <mat-icon>delete</mat-icon>
+                    מחק
+                </button>
+            </mat-card-actions>
+        </mat-card>
+        }
+    </div>
+</div>

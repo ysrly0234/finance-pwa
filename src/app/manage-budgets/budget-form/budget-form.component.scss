@@ -1,0 +1,34 @@
+.form-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+h2 {
+    margin-bottom: var(--spacing-lg);
+    color: var(--primary-color);
+}
+
+.form-row {
+    margin-bottom: var(--spacing-sm);
+}
+
+.full-width {
+    width: 100%;
+}
+
+.custom-cycle-group {
+    display: flex;
+    gap: var(--spacing-md);
+    align-items: baseline;
+
+    mat-form-field {
+        flex: 1;
+    }
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-xl);
+}

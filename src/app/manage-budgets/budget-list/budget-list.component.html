@@ -1,0 +1,46 @@
+<div class="budget-list">
+    @if (budgets().length === 0) {
+    <div class="empty-state">
+        <p>No budgets found. Create one to get started!</p>
+    </div>
+    }
+
+    @for (budget of budgets(); track budget.id) {
+    <mat-card class="budget-card">
+        <mat-card-header>
+            <mat-card-title>{{ budget.name }}</mat-card-title>
+            <mat-card-subtitle>
+                <mat-chip-set>
+                    <mat-chip [class]="'importance-' + budget.importance">{{ budget.importance }}</mat-chip>
+                </mat-chip-set>
+            </mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+            @if (budget.description) {
+            <p class="budget-desc">{{ budget.description }}</p>
+            }
+
+            <div class="budget-details">
+                <div class="detail-item">
+                    <span class="label">Amount:</span>
+                    <span class="value">{{ budget.amount | currency }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Cycle:</span>
+                    <span class="value">{{ getCycleLabel(budget) }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Accumulating:</span>
+                    <span class="value">{{ budget.isAccumulating ? 'Yes' : 'No' }}</span>
+                </div>
+            </div>
+        </mat-card-content>
+
+        <mat-card-actions align="end">
+            <button mat-button (click)="onEdit(budget)">Edit</button>
+            <button mat-button color="warn" (click)="onDelete(budget.id)">Delete</button>
+        </mat-card-actions>
+    </mat-card>
+    }
+</div>

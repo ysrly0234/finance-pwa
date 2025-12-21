@@ -1,0 +1,26 @@
+<div class="manage-budgets-container">
+    <div class="header">
+        <h1>Manage Budgets</h1>
+        @if (!showForm()) {
+        <button mat-raised-button color="primary" (click)="onCreate()">
+            + Create New Budget
+        </button>
+        }
+    </div>
+
+    @if (isLoading()) {
+    <div class="loading-overlay">
+        <mat-spinner diameter="40"></mat-spinner>
+    </div>
+    }
+
+    <div class="content">
+        @if (showForm()) {
+        <app-budget-form [budget]="selectedBudget()" (save)="onSave($event)" (cancel)="onCancel()">
+        </app-budget-form>
+        } @else {
+        <app-budget-list [budgets]="budgets()" (edit)="onEdit($event)" (delete)="onDelete($event)">
+        </app-budget-list>
+        }
+    </div>
+</div>

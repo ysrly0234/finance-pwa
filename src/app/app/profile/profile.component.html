@@ -1,0 +1,52 @@
+<div class="profile-container">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>פרטים אישיים</mat-card-title>
+            <mat-card-subtitle>שם תצוגה: {{ displayName() }}</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+            <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+                <div class="form-row">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>שם פרטי</mat-label>
+                        <input matInput formControlName="firstName" required>
+                        @if (profileForm.get('firstName')?.hasError('required')) {
+                        <mat-error>שדה חובה</mat-error>
+                        }
+                    </mat-form-field>
+                </div>
+
+                <div class="form-row">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>שם משפחה</mat-label>
+                        <input matInput formControlName="lastName">
+                    </mat-form-field>
+                </div>
+
+                <div class="form-row">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>כינוי</mat-label>
+                        <input matInput formControlName="nickname">
+                        <mat-hint>אם מוגדר, יוצג במקום השם המלא</mat-hint>
+                    </mat-form-field>
+                </div>
+
+                <div class="form-row">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>תאריך לידה</mat-label>
+                        <input matInput [matDatepicker]="picker" formControlName="dateOfBirth">
+                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                </div>
+
+                <div class="form-actions">
+                    <button mat-raised-button color="primary" type="submit" [disabled]="!profileForm.valid">
+                        שמור שינויים
+                    </button>
+                </div>
+            </form>
+        </mat-card-content>
+    </mat-card>
+</div>
