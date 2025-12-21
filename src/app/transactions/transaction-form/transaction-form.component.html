@@ -1,0 +1,148 @@
+<h2 mat-dialog-title>
+    {{ isEdit ? 'עריכת תנועה' : 'הוספת תנועה חדשה' }}
+</h2>
+
+<mat-dialog-content>
+    <div class="type-toggle-container" *ngIf="!isEdit">
+        <mat-button-toggle-group [value]="transactionType()" (change)="onTypeChange($event.value)">
+            <mat-button-toggle value="expense" class="expense-toggle">
+                <mat-icon>trending_down</mat-icon>
+                הוצאה
+            </mat-button-toggle>
+            <mat-button-toggle value="income" class="income-toggle">
+                <mat-icon>trending_up</mat-icon>
+                הכנסה
+            </mat-button-toggle>
+        </mat-button-toggle-group>
+    </div>
+
+    <form [formGroup]="form" class="form-container">
+        <!-- Common Fields -->
+        <div class="form-row split-row">
+            <mat-form-field appearance="outline">
+                <mat-label>סכום</mat-label>
+                <input matInput type="number" formControlName="amount" min="0">
+                <span matTextPrefix>₪&nbsp;</span>
+                @if (form.get('amount')?.hasError('required')) {
+                <mat-error>שדה חובה</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>תאריך</mat-label>
+                <input matInput [matDatepicker]="picker" formControlName="date">
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+                @if (form.get('date')?.hasError('required')) {
+                <mat-error>שדה חובה</mat-error>
+                }
+            </mat-form-field>
+        </div>
+
+        <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>תיאור</mat-label>
+                <input matInput formControlName="description" placeholder="מה קנינו? מאיפה הכסף?">
+                @if (form.get('description')?.hasError('required')) {
+                <mat-error>שדה חובה</mat-error>
+                }
+            </mat-form-field>
+        </div>
+
+        <!-- Expense Specific Fields -->
+        @if (transactionType() === 'expense') {
+        <div class="expense-section">
+            <div class="form-row">
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>תקציב</mat-label>
+                    <mat-select formControlName="budgetId">
+                        @for (budget of data.budgets; track budget.id) {
+                        <mat-option [value]="budget.id">
+                            {{ budget.name }} (סכום: {{ budget.amount }} ₪)
+                        </mat-option>
+                        } @empty {
+                        <mat-option disabled>אין תקציבים זמינים</mat-option>
+                        }
+                    </mat-select>
+                    @if (form.get('budgetId')?.hasError('required')) {
+                    <mat-error>חובה לשייך לתקציב</mat-error>
+                    }
+                </mat-form-field>
+            </div>
+
+            <div class="form-row">
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>כרטיס אשראי לחיוב</mat-label>
+                    <mat-select formControlName="creditCardId">
+                        @for (card of data.creditCards; track card.id) {
+                        <mat-option [value]="card.id">{{ card.displayName }}</mat-option>
+                        } @empty {
+                        <mat-option disabled>אין כרטיסי אשראי פעילים</mat-option>
+                        }
+                    </mat-select>
+                    @if (form.get('creditCardId')?.hasError('required')) {
+                    <mat-error>חובה לשייך לכרטיס אשראי</mat-error>
+                    }
+                </mat-form-field>
+            </div>
+        </div>
+        }
+
+        <!-- Income Specific Fields -->
+        @if (transactionType() === 'income') {
+        <div class="income-section">
+            <label>ייעוד ההכנסה:</label>
+            <div class="target-type-toggle">
+                <div class="target-type-selection">
+                    <div class="selection-card" [class.selected]="targetType() === 'account'"
+                        (click)="onTargetTypeChange('account')">
+                        <mat-icon>account_balance</mat-icon>
+                        <span>חשבון עו"ש</span>
+                    </div>
+                    <div class="selection-card" [class.selected]="targetType() === 'card'"
+                        (click)="onTargetTypeChange('card')">
+                        <mat-icon>credit_card</mat-icon>
+                        <span>זיכוי כרטיס</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row" style="margin-top: 1rem;">
+                @if (targetType() === 'account') {
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>חשבון להפקדה</mat-label>
+                    <mat-select formControlName="receivingAccountId">
+                        @for (account of data.accounts; track account.id) {
+                        <mat-option [value]="account.id">{{ account.name }}</mat-option>
+                        }
+                    </mat-select>
+                    @if (form.get('receivingAccountId')?.hasError('required')) {
+                    <mat-error>שדה חובה</mat-error>
+                    }
+                </mat-form-field>
+                } @else {
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>כרטיס לזיכוי</mat-label>
+                    <mat-select formControlName="receivingCreditCardId">
+                        @for (card of data.creditCards; track card.id) {
+                        <mat-option [value]="card.id">{{ card.displayName }}</mat-option>
+                        }
+                    </mat-select>
+                    @if (form.get('receivingCreditCardId')?.hasError('required')) {
+                    <mat-error>שדה חובה</mat-error>
+                    }
+                </mat-form-field>
+                }
+            </div>
+        </div>
+        }
+
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()">ביטול</button>
+    <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="form.invalid">
+        {{ isEdit ? 'עדכן' : 'שמור' }}
+    </button>
+</mat-dialog-actions>

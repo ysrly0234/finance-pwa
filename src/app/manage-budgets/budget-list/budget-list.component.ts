@@ -8,6 +8,9 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { IBudget } from '../../../shared/models/budget.model';
 import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { Observable } from 'rxjs';
+
 @Component({
   selector: 'app-budget-list',
   standalone: true,
@@ -17,13 +20,14 @@ import { ConfirmationDialogComponent } from '../../../shared/components/confirma
     MatButtonModule,
     MatIconModule,
     MatChipsModule,
-    MatDialogModule
+    MatDialogModule,
+    MatProgressBarModule
   ],
   templateUrl: './budget-list.component.html',
   styleUrl: './budget-list.component.scss'
 })
 export class BudgetListComponent {
-  budgets = input<IBudget[]>([]);
+  budgets = input<(IBudget & { status$?: Observable<any> })[]>([]);
   edit = output<IBudget>();
   delete = output<string>();
 
@@ -35,7 +39,7 @@ export class BudgetListComponent {
 
   onDelete(id: string) {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      data: { title: 'Delete Budget', message: 'Are you sure you want to delete this budget?' }
+      data: { title: 'מחיקת תקציב', message: 'האם אתה בטוח שברצונך למחוק תקציב זה?' }
     });
 
     dialogRef.afterClosed().subscribe(result => {

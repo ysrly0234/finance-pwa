@@ -1,0 +1,102 @@
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-top: 1rem;
+    min-width: 350px;
+}
+
+.type-toggle-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.type-toggle-container mat-button-toggle-group {
+    width: 100%;
+}
+
+.type-toggle-container mat-button-toggle-group mat-button-toggle {
+    width: 50%;
+}
+
+.type-toggle-container mat-button-toggle-group mat-button-toggle.expense-toggle.mat-button-toggle-checked {
+    background-color: #fee2e2; // Light red
+    color: #ef4444;
+}
+
+.type-toggle-container mat-button-toggle-group mat-button-toggle.income-toggle.mat-button-toggle-checked {
+    background-color: #dcfce7; // Light green
+    color: #22c55e;
+}
+
+.form-row {
+    display: flex;
+    width: 100%;
+}
+
+.form-row.split-row {
+    gap: 1rem;
+}
+
+.form-row.split-row mat-form-field {
+    flex: 1;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.target-type-selection {
+    display: flex;
+    gap: 1rem;
+    margin: 0.5rem 0 1rem 0;
+}
+
+.target-type-selection .selection-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.target-type-selection .selection-card mat-icon {
+    font-size: 24px;
+    color: var(--text-muted);
+}
+
+.target-type-selection .selection-card span {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.target-type-selection .selection-card:hover {
+    background-color: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+.target-type-selection .selection-card.selected {
+    border-color: var(--primary-color);
+    background-color: #ecfdf5; // Tint of primary/success
+}
+
+.target-type-selection .selection-card.selected mat-icon {
+    color: var(--primary-color);
+}
+
+.target-type-selection .selection-card.selected span {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+h2 {
+    text-align: center;
+}

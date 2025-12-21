@@ -52,12 +52,12 @@ export class BudgetFormComponent {
 
   customUnitLabel = computed(() => {
     const val = this.customValueValue();
-    return val == 1 ? 'Month' : 'Months';
+    return val == 1 ? 'חודש' : 'חודשים';
   });
 
   customUnitYearLabel = computed(() => {
     const val = this.customValueValue();
-    return val == 1 ? 'Year' : 'Years';
+    return val == 1 ? 'שנה' : 'שנים';
   });
 
   constructor() {

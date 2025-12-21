@@ -31,9 +31,29 @@
             </div>
         </div>
 
-        <div class="budget-amount-section">
-            <span class="amount-value">{{ budget.amount | currency:'ILS':'symbol':'1.0-0' }}</span>
-            <span class="amount-label">תקציב</span>
+        <div class="budget-stats-container">
+            <div class="stats-top-row">
+                <span class="amount">{{ budget.amount | currency:'ILS':'symbol':'1.0-0' }}</span>
+                <span class="cycle-info">/ {{ getCycleLabel(budget) }}</span>
+            </div>
+
+            <ng-container *ngIf="budget.status$ | async as status">
+                <div class="usage-bar-section">
+                    <div class="usage-text">
+                        <span>נוצל: {{ status.spent | currency:'ILS':'symbol':'1.0-0' }}</span>
+                        <span class="separator">|</span>
+                        <span [class.overdraft-text]="status.remaining < 0">
+                            {{ status.remaining >= 0 ? 'נותר: ' : 'חריגה: ' }}
+                            {{ (status.remaining >= 0 ? status.remaining : status.remaining * -1) |
+                            currency:'ILS':'symbol':'1.0-0' }}
+                        </span>
+                    </div>
+                    <mat-progress-bar class="custom-progress" [mode]="'determinate'"
+                        [value]="status.percentUsed > 100 ? 100 : status.percentUsed"
+                        [class.overdraft]="status.remaining < 0">
+                    </mat-progress-bar>
+                </div>
+            </ng-container>
         </div>
 
         <div class="budget-actions">

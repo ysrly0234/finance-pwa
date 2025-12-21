@@ -1,52 +1,53 @@
 <div class="card form-container">
-    <h2>{{ budget() ? 'Edit Budget' : 'Create New Budget' }}</h2>
+    <h2 class="form-title">{{ budget() ? 'עריכת תקציב' : 'יצירת תקציב חדש' }}</h2>
 
     <form [formGroup]="budgetForm" (ngSubmit)="onSubmit()">
-        <div class="form-row">
-            <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Name</mat-label>
-                <input matInput formControlName="name" placeholder="e.g. Groceries">
+        <div class="form-row split">
+            <mat-form-field appearance="outline" class="flex-2">
+                <mat-label>שם התקציב</mat-label>
+                <input matInput formControlName="name" placeholder="לדוגמה: מזון">
                 @if (budgetForm.get('name')?.touched && budgetForm.get('name')?.hasError('required')) {
-                <mat-error>Name is required</mat-error>
+                <mat-error>שדה חובה</mat-error>
                 }
-                @if (budgetForm.get('name')?.hasError('maxlength')) {
-                <mat-error>Max 32 characters</mat-error>
-                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="flex-1">
+                <mat-label>סכום</mat-label>
+                <input matInput type="number" formControlName="amount" min="0">
+                <span matTextPrefix>₪&nbsp;</span>
             </mat-form-field>
         </div>
 
-        <div class="form-row">
-            <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Description</mat-label>
-                <textarea matInput formControlName="description" rows="3"
-                    placeholder="Optional description..."></textarea>
-                @if (budgetForm.get('description')?.hasError('maxlength')) {
-                <mat-error>Max 128 characters</mat-error>
-                }
-            </mat-form-field>
-        </div>
-
-        <div class="form-row">
-            <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Cycle</mat-label>
+        <div class="form-row split">
+            <mat-form-field appearance="outline" class="flex-1">
+                <mat-label>מחזוריות</mat-label>
                 <mat-select formControlName="cycleType">
-                    <mat-option value="monthly">Monthly</mat-option>
-                    <mat-option value="bi-monthly">Bi-Monthly</mat-option>
-                    <mat-option value="yearly">Yearly</mat-option>
-                    <mat-option value="custom">Custom</mat-option>
+                    <mat-option value="monthly">חודשי</mat-option>
+                    <mat-option value="bi-monthly">דו-חודשי</mat-option>
+                    <mat-option value="yearly">שנתי</mat-option>
+                    <mat-option value="custom">מותאם אישית</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="flex-1">
+                <mat-label>חשיבות</mat-label>
+                <mat-select formControlName="importance">
+                    <mat-option value="high">גבוהה</mat-option>
+                    <mat-option value="medium">בינונית</mat-option>
+                    <mat-option value="low">נמוכה</mat-option>
                 </mat-select>
             </mat-form-field>
         </div>
 
         @if (cycleTypeValue() === 'custom') {
-        <div class="form-row custom-cycle-group">
+        <div class="form-row split custom-cycle-group">
             <mat-form-field appearance="outline">
-                <mat-label>Every</mat-label>
+                <mat-label>כל</mat-label>
                 <input matInput type="number" formControlName="customValue" min="1">
             </mat-form-field>
 
             <mat-form-field appearance="outline">
-                <mat-label>Unit</mat-label>
+                <mat-label>יחידה</mat-label>
                 <mat-select formControlName="customUnit">
                     <mat-option value="month">{{ customUnitLabel() }}</mat-option>
                     <mat-option value="year">{{ customUnitYearLabel() }}</mat-option>
@@ -57,33 +58,18 @@
 
         <div class="form-row">
             <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Amount</mat-label>
-                <input matInput type="number" formControlName="amount" min="0">
-                <span matTextPrefix>$&nbsp;</span>
+                <mat-label>תיאור</mat-label>
+                <textarea matInput formControlName="description" rows="2" placeholder="אופציונלי..."></textarea>
             </mat-form-field>
         </div>
 
-        <div class="form-row">
-            <mat-checkbox formControlName="isAccumulating">Accumulate unused amount?</mat-checkbox>
-        </div>
-
-        <div class="form-row">
-            <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Importance</mat-label>
-                <mat-select formControlName="importance">
-                    <mat-option value="high">High</mat-option>
-                    <mat-option value="medium">Medium</mat-option>
-                    <mat-option value="low">Low</mat-option>
-                </mat-select>
-                @if (budgetForm.get('importance')?.touched && budgetForm.get('importance')?.hasError('required')) {
-                <mat-error>Importance is required</mat-error>
-                }
-            </mat-form-field>
+        <div class="form-row compact-row">
+            <mat-checkbox formControlName="isAccumulating">לצבור יתרה?</mat-checkbox>
         </div>
 
         <div class="form-actions">
-            <button mat-button type="button" (click)="onCancel()">Cancel</button>
-            <button mat-raised-button color="primary" type="submit">Save Budget</button>
+            <button mat-button type="button" (click)="onCancel()">ביטול</button>
+            <button mat-raised-button color="primary" type="submit">שמור</button>
         </div>
     </form>
 </div>

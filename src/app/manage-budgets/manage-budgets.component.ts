@@ -26,7 +26,8 @@ import { Observable } from 'rxjs';
 export class ManageBudgetsComponent implements OnInit {
   private budgetService = inject(BudgetService);
 
-  budgets = signal<IBudget[]>([]);
+  // Extended type for UI
+  budgets = signal<(IBudget & { status$: Observable<any> })[]>([]);
   showForm = signal(false);
   selectedBudget = signal<IBudget | null>(null);
   isLoading = signal(false);
@@ -36,7 +37,13 @@ export class ManageBudgetsComponent implements OnInit {
   }
 
   loadBudgets() {
-    this.budgetService.getBudgets().subscribe(b => this.budgets.set(b));
+    this.budgetService.getBudgets().subscribe(budgets => {
+      const budgetsWithStatus = budgets.map(b => ({
+        ...b,
+        status$: this.budgetService.getBudgetStatus(b)
+      }));
+      this.budgets.set(budgetsWithStatus);
+    });
   }
 
   onCreate() {

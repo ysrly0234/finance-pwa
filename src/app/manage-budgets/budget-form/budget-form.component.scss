@@ -1,15 +1,36 @@
 .form-container {
     max-width: 600px;
     margin: 0 auto;
+    padding: 1rem;
 }
 
-h2 {
-    margin-bottom: var(--spacing-lg);
+.form-title {
+    margin-bottom: 1rem;
     color: var(--primary-color);
+    font-size: 1.25rem;
+    margin-top: 0;
 }
 
 .form-row {
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: 0.5rem;
+    width: 100%;
+
+    &.split {
+        display: flex;
+        gap: 0.75rem;
+    }
+
+    &.compact-row {
+        margin-bottom: 1rem;
+    }
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+.flex-2 {
+    flex: 2;
 }
 
 .full-width {
@@ -17,8 +38,6 @@ h2 {
 }
 
 .custom-cycle-group {
-    display: flex;
-    gap: var(--spacing-md);
     align-items: baseline;
 
     mat-form-field {
@@ -29,6 +48,6 @@ h2 {
 .form-actions {
     display: flex;
     justify-content: flex-end;
-    gap: var(--spacing-md);
-    margin-top: var(--spacing-xl);
+    gap: 1rem;
+    margin-top: 1rem;
 }

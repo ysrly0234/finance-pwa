@@ -1,14 +1,16 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
+import { Observable, of, throwError, combineLatest } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { IBudget } from '../models/budget.model';
 import { StorageService } from './storage.service';
+import { TransactionService } from './transaction.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BudgetService {
   private storage = inject(StorageService);
+  private transactionService = inject(TransactionService);
   private readonly STORAGE_KEY = 'budgets';
 
   getBudgets(): Observable<IBudget[]> {
@@ -63,6 +65,29 @@ export class BudgetService {
         }
         console.error('Budget not found for delete:', id);
         return throwError(() => new Error('Budget not found'));
+      })
+    );
+  }
+
+  getBudgetUsage(budgetId: string): Observable<number> {
+    return this.transactionService.getExpenses().pipe(
+      map(expenses => {
+        return expenses
+          .filter(e => e.budgetId === budgetId)
+          .reduce((sum, e) => sum + Number(e.amount), 0);
+      })
+    );
+  }
+
+  getBudgetStatus(budget: IBudget): Observable<{ allocated: number, spent: number, remaining: number, percentUsed: number }> {
+    return this.getBudgetUsage(budget.id).pipe(
+      map(spent => {
+        return {
+          allocated: Number(budget.amount),
+          spent: spent,
+          remaining: Number(budget.amount) - spent,
+          percentUsed: (spent / Number(budget.amount)) * 100
+        };
       })
     );
   }

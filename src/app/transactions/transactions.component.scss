@@ -1,0 +1,285 @@
+.page-header {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.year-selector {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: white;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.year-selector h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-color);
+    min-width: 100px;
+    text-align: center;
+}
+
+.year-selector button {
+    color: var(--text-muted);
+}
+
+.summary-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.summary-card {
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.summary-card .label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+}
+
+.summary-card .value {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.summary-card.income .value {
+    color: #10b981;
+}
+
+.summary-card.expense .value {
+    color: #ef4444;
+}
+
+.add-btn-text {
+    background-color: #f1f5f9 !important;
+    color: var(--text-color) !important;
+    box-shadow: none !important;
+    border-radius: 20px !important;
+    padding: 0 16px !important;
+}
+
+.summary-card.income .add-btn-text {
+    color: #10b981 !important;
+    background-color: #ecfdf5 !important;
+}
+
+.summary-card.expense .add-btn-text {
+    color: #ef4444 !important;
+    background-color: #fef2f2 !important;
+}
+
+.accordion-container {
+    max-width: 800px;
+    margin: 0 auto 5rem auto;
+}
+
+.accordion-container mat-expansion-panel {
+    margin-bottom: 0.5rem;
+    border-radius: 8px;
+}
+
+.accordion-container mat-expansion-panel-header {
+    height: 64px;
+}
+
+.accordion-container mat-panel-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+    align-items: center;
+}
+
+.accordion-container mat-panel-description {
+    flex-grow: 1;
+    justify-content: flex-end;
+    align-items: center;
+    margin-right: 0;
+}
+
+.month-sums {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.9rem;
+}
+
+.month-sums .income-sum {
+    color: #10b981;
+}
+
+.month-sums .expense-sum {
+    color: #ef4444;
+}
+
+.transactions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding-top: 0.5rem;
+}
+
+.transaction-item {
+    display: flex;
+    align-items: center;
+    background: #f8fafc;
+    /* Slightly darker inside accordion */
+    padding: 0.5rem 0.75rem;
+    /* Compact padding */
+    border-radius: 8px;
+    /* Slightly smaller radius for compact look */
+    border: 1px solid transparent;
+    transition: all 0.2s;
+    min-height: 48px;
+    /* Ensure minimum touch target but keep it small */
+}
+
+.transaction-item:hover {
+    background: #f1f5f9;
+    transform: translateY(-1px);
+}
+
+.transaction-item.is-expense .icon-section {
+    background: #fef2f2;
+    color: #ef4444;
+}
+
+.transaction-item:not(.is-expense) .icon-section {
+    background: #ecfdf5;
+    color: #10b981;
+}
+
+.icon-section {
+    width: 32px;
+    /* Smaller icon width */
+    height: 32px;
+    /* Smaller icon height */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 0.75rem;
+    /* Reduced margin */
+}
+
+.icon-section mat-icon {
+    font-size: 18px;
+    /* Smaller icon glyph */
+    width: 18px;
+    height: 18px;
+}
+
+.details-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.details-section .description {
+    font-weight: 500;
+    font-size: 0.95rem;
+    /* Slightly smaller font */
+    color: var(--text-color);
+    margin-bottom: 0;
+    /* Remove margin for compaction */
+    line-height: 1.2;
+}
+
+.details-section .meta-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    /* Smaller meta info */
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.details-section .meta-info .separator {
+    opacity: 0.4;
+}
+
+.amount-section {
+    font-weight: 700;
+    font-size: 1rem;
+    /* Adjusted font size */
+    margin-left: 0.5rem;
+    direction: ltr;
+}
+
+.amount-section.expense-text {
+    color: #ef4444;
+}
+
+.amount-section.income-text {
+    color: #10b981;
+}
+
+.actions-section {
+    display: flex;
+    gap: 0;
+    /* Tight actions */
+    opacity: 0;
+    transition: opacity 0.2s;
+    align-items: center;
+    /* Vertical center */
+}
+
+.actions-section button {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.actions-section button mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+
+.transaction-item:hover .actions-section {
+    opacity: 1;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-muted);
+}
+
+.empty-state .huge-icon {
+    font-size: 4rem;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 1rem;
+    opacity: 0.2;
+}
+
+.empty-month-state {
+    text-align: center;
+    padding: 1.5rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    background: #ffffff;
+    border-radius: 8px;
+    margin: 0.5rem 0;
+    border: 1px dashed #e2e8f0;
+}

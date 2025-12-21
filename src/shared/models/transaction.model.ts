@@ -1,14 +1,14 @@
-export type PaymentMethod = 'cash' | 'credit' | 'account';
+// Payment method is now largely redundant for expenses as they are strictly credit card based in this version,
+// but we keep the concept for Income target types.
+export type TransactionTargetType = 'account' | 'card';
 
 export interface IExpense {
     id: string;
     amount: number;
     description: string;
     executionDate: Date;
-    budgetId: string;
-    paymentMethod: PaymentMethod;
-    creditCardId?: string; // Required when paymentMethod is 'credit'
-    accountId?: string; // Required when paymentMethod is 'account'
+    budgetId: string; // Required: Every expense must be linked to a budget
+    creditCardId: string; // Required: Every expense must be linked to a credit card
 }
 
 export interface IIncome {
@@ -16,5 +16,7 @@ export interface IIncome {
     amount: number;
     description?: string;
     receiptDate: Date;
-    receivingAccountId: string;
+    targetType: TransactionTargetType;
+    receivingAccountId?: string; // Required if targetType is 'account'
+    receivingCreditCardId?: string; // Required if targetType is 'card' (refund)
 }

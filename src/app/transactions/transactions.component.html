@@ -1,1 +1,106 @@
-<p>transactions works!</p>
+<div class="page-header">
+    <div class="year-selector">
+        <button mat-icon-button (click)="prevYear()">
+            <mat-icon>chevron_right</mat-icon>
+        </button>
+        <h2>{{ currentYear() }}</h2>
+        <button mat-icon-button (click)="nextYear()">
+            <mat-icon>chevron_left</mat-icon>
+        </button>
+    </div>
+</div>
+
+<div class="summary-cards">
+    <div class="summary-card income">
+        <div class="card-content">
+            <div class="label">הכנסות</div>
+            <div class="value">+{{ totalYearIncome() | currency:'ILS':'symbol':'1.0-0' }}</div>
+        </div>
+        <button mat-flat-button class="add-btn-text" (click)="openIncomeForm()">
+            <mat-icon>add</mat-icon>
+            הוספה
+        </button>
+    </div>
+    <div class="summary-card expense">
+        <div class="card-content">
+            <div class="label">הוצאות</div>
+            <div class="value">-{{ totalYearExpenses() | currency:'ILS':'symbol':'1.0-0' }}</div>
+        </div>
+        <button mat-flat-button class="add-btn-text" (click)="openExpenseForm()">
+            <mat-icon>add</mat-icon>
+            הוספה
+        </button>
+    </div>
+</div>
+
+<div class="accordion-container">
+    @if (groupedTransactions().length > 0) {
+    <mat-accordion multi="false">
+        @for (monthGroup of groupedTransactions(); track monthGroup.date.getTime(); let index = $index) {
+        <mat-expansion-panel [expanded]="index === 0">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    {{ getMonthName(monthGroup.date) }}
+                </mat-panel-title>
+                <mat-panel-description>
+                    <div class="month-sums">
+                        <span class="income-sum">+{{ monthGroup.totalIncome | currency:'ILS':'symbol':'1.0-0' }}</span>
+                        <span class="expense-sum">-{{ monthGroup.totalExpense | currency:'ILS':'symbol':'1.0-0'
+                            }}</span>
+                    </div>
+                </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <div class="transactions-list">
+                @for (t of monthGroup.transactions; track t.id) {
+                <div class="transaction-item" [class.is-expense]="isExpense(t)">
+                    <div class="icon-section">
+                        <mat-icon>{{ isExpense(t) ? 'shopping_cart' : 'savings' }}</mat-icon>
+                    </div>
+                    <div class="details-section">
+                        <div class="description">{{ t.description }}</div>
+                        <div class="meta-info">
+                            <span class="date">{{ getDate(t) | date:'dd/MM/yyyy' }}</span>
+                            <span class="separator">•</span>
+                            @if (isExpense(t)) {
+                            <span class="source">{{ getBudgetName(getBudgetId(t)) }}</span>
+                            <span class="separator">•</span>
+                            <span class="method">{{ getCardName(getCreditCardId(t)) }}</span>
+                            } @else {
+                            @if (getTargetType(t) === 'account') {
+                            <span class="method">לחשבון: {{ getAccountName(getReceivingAccountId(t)) }}</span>
+                            } @else {
+                            <span class="method">זיכוי כרטיס: {{ getCardName(getReceivingCreditCardId(t)) }}</span>
+                            }
+                            }
+                        </div>
+                    </div>
+                    <div class="amount-section" [class.expense-text]="isExpense(t)" [class.income-text]="!isExpense(t)">
+                        {{ isExpense(t) ? '-' : '+' }}{{ t.amount | currency:'ILS':'symbol':'1.0-0' }}
+                    </div>
+                    <div class="actions-section">
+                        <button mat-icon-button color="primary" (click)="editTransaction(t)">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        <button mat-icon-button color="warn" (click)="deleteTransaction(t)">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </div>
+                </div>
+                } @empty {
+                <div class="empty-month-state">
+                    <p>אין תנועות בחודש זה</p>
+                </div>
+                }
+            </div>
+
+        </mat-expansion-panel>
+        }
+    </mat-accordion>
+    } @else {
+    <div class="empty-state">
+        <mat-icon class="huge-icon">receipt_long</mat-icon>
+        <p>אין תנועות בשנת {{ currentYear() }}</p>
+    </div>
+    }
+</div>
