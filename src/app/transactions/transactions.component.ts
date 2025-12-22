@@ -263,6 +263,65 @@ export class TransactionsComponent {
     });
   }
 
+  exportToExcel() {
+    const all = this.transactions();
+    const headers = ['תאריך', 'סוג', 'תיאור', 'סכום', 'קטגוריה/יעד', 'אמצעי תשלום/קבלת תשלום'];
+
+    const rows = all.map(t => {
+      const date = this.getDate(t).toLocaleDateString('he-IL');
+      const type = this.isExpense(t) ? 'הוצאה' : 'הכנסה';
+      const description = (t.description || '').replace(/,/g, ' ');
+      const amount = t.amount;
+
+      let category = '';
+      let method = '';
+      const isExp = this.isExpense(t);
+
+      if (isExp) {
+        category = this.getBudgetName((t as IExpense).budgetId);
+        const exp = t as IExpense;
+        if (exp.paymentMethod === 'account') {
+          method = `מזומן/עו"ש: ${this.getAccountName(exp.paymentAccountId)}`;
+        } else {
+          method = `אשראי: ${this.getCardName(exp.creditCardId)}`;
+        }
+      } else {
+        category = '-'; // Income doesn't have budget usually, or target type
+        const incom = t as IIncome;
+        if (incom.targetType === 'account') {
+          method = `לחשבון: ${this.getAccountName(incom.receivingAccountId)}`;
+        } else {
+          method = `לכרטיס: ${this.getCardName(incom.receivingCreditCardId)}`;
+        }
+      }
+
+      return [date, type, description, amount, category, method].join(',');
+    });
+
+    // Summary
+    const totalInc = all.filter(t => !this.isExpense(t)).reduce((s, t) => s + t.amount, 0);
+    const totalExp = all.filter(t => this.isExpense(t)).reduce((s, t) => s + t.amount, 0);
+    const balance = totalInc - totalExp;
+
+    const summaryRow = ['', '', 'סה"כ', '', '', ''].join(',');
+    const incomeRow = ['', '', 'סה"כ הכנסות', totalInc, '', ''].join(',');
+    const expenseRow = ['', '', 'סה"כ הוצאות', totalExp, '', ''].join(',');
+    const balanceRow = ['', '', 'סה"כ הפרש', balance, '', ''].join(',');
+
+    // Combine with BOM for Hebrew
+    const csvContent = '\uFEFF' + [headers.join(','), ...rows, '', summaryRow, incomeRow, expenseRow, balanceRow].join('\n');
+
+    // Download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `transactions_export_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
   isExpense(t: IExpense | IIncome): t is IExpense {
     return 'executionDate' in t;
   }
@@ -274,6 +333,14 @@ export class TransactionsComponent {
   getBudgetName(id?: string): string {
     if (!id) return '';
     return this.budgets().find(b => b.id === id)?.name || 'לא ידוע';
+  }
+
+  getPaymentMethod(t: IExpense | IIncome): string | undefined {
+    return this.isExpense(t) ? (t as IExpense).paymentMethod : undefined;
+  }
+
+  getPaymentAccountId(t: IExpense | IIncome): string | undefined {
+    return this.isExpense(t) ? (t as IExpense).paymentAccountId : undefined;
   }
 
   getBudgetId(t: IExpense | IIncome): string | undefined {

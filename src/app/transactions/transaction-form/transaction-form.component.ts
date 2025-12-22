@@ -53,6 +53,7 @@ export class TransactionFormComponent implements OnInit {
     isEdit = false;
     transactionType = signal<'expense' | 'income'>('expense');
     targetType = signal<TransactionTargetType>('account');
+    paymentMethod = signal<TransactionTargetType>('card');
 
     ngOnInit(): void {
         this.isEdit = !!this.data.transaction;
@@ -71,12 +72,14 @@ export class TransactionFormComponent implements OnInit {
 
     private initForm() {
         this.form = this.fb.group({
-            amount: [0, [Validators.required, Validators.min(0.1)]],
+            amount: [null as number | null, [Validators.required, Validators.min(0.1)]],
             description: ['', [Validators.required]],
             date: [new Date(), [Validators.required]],
             // Expense validation
             budgetId: [''],
+            paymentMethod: ['card'],
             creditCardId: [''],
+            paymentAccountId: [''],
             // Income validation
             targetType: ['account'],
             receivingAccountId: [''],
@@ -98,17 +101,28 @@ export class TransactionFormComponent implements OnInit {
 
         const budgetCtrl = this.form.get('budgetId');
         const cardCtrl = this.form.get('creditCardId');
+        const payAccountCtrl = this.form.get('paymentAccountId');
         const receiveAccountCtrl = this.form.get('receivingAccountId');
         const receiveCardCtrl = this.form.get('receivingCreditCardId');
 
         if (type === 'expense') {
             budgetCtrl?.setValidators([Validators.required]);
-            cardCtrl?.setValidators([Validators.required]);
+
             receiveAccountCtrl?.clearValidators();
             receiveCardCtrl?.clearValidators();
+
+            const method = this.form.get('paymentMethod')?.value;
+            if (method === 'card') {
+                cardCtrl?.setValidators([Validators.required]);
+                payAccountCtrl?.clearValidators();
+            } else {
+                cardCtrl?.clearValidators();
+                payAccountCtrl?.setValidators([Validators.required]);
+            }
         } else {
             budgetCtrl?.clearValidators();
             cardCtrl?.clearValidators();
+            payAccountCtrl?.clearValidators();
 
             const currentTargetType = this.form.get('targetType')?.value;
             if (currentTargetType === 'account') {
@@ -120,6 +134,7 @@ export class TransactionFormComponent implements OnInit {
             }
         }
 
+        payAccountCtrl?.updateValueAndValidity({ emitEvent: false });
         budgetCtrl?.updateValueAndValidity({ emitEvent: false });
         cardCtrl?.updateValueAndValidity({ emitEvent: false });
         receiveAccountCtrl?.updateValueAndValidity({ emitEvent: false });
@@ -137,8 +152,11 @@ export class TransactionFormComponent implements OnInit {
                 description: exp.description,
                 date: exp.executionDate,
                 budgetId: exp.budgetId,
-                creditCardId: exp.creditCardId
+                paymentMethod: exp.paymentMethod || 'card',
+                creditCardId: exp.creditCardId,
+                paymentAccountId: exp.paymentAccountId
             });
+            this.paymentMethod.set(exp.paymentMethod || 'card');
         } else {
             const inc = t as IIncome;
             this.form.patchValue({
@@ -155,6 +173,12 @@ export class TransactionFormComponent implements OnInit {
 
     onTypeChange(type: 'expense' | 'income') {
         this.transactionType.set(type);
+        this.updateValidators();
+    }
+
+    onPaymentMethodChange(method: TransactionTargetType) {
+        this.paymentMethod.set(method);
+        this.form.patchValue({ paymentMethod: method });
         this.updateValidators();
     }
 
@@ -177,7 +201,9 @@ export class TransactionFormComponent implements OnInit {
                     description: formValue.description,
                     executionDate: formValue.date,
                     budgetId: formValue.budgetId,
-                    creditCardId: formValue.creditCardId
+                    paymentMethod: formValue.paymentMethod,
+                    creditCardId: formValue.paymentMethod === 'card' ? formValue.creditCardId : undefined,
+                    paymentAccountId: formValue.paymentMethod === 'account' ? formValue.paymentAccountId : undefined
                 } as Omit<IExpense, 'id'> | IExpense;
             } else {
                 result = {

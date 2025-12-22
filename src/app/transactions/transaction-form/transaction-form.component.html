@@ -19,9 +19,10 @@
     <form [formGroup]="form" class="form-container">
         <!-- Common Fields -->
         <div class="form-row split-row">
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="outline" floatLabel="always">
                 <mat-label>סכום</mat-label>
-                <input matInput type="number" formControlName="amount" min="0">
+                <input matInput type="number" formControlName="amount" min="0" placeholder="0">
+                <span matTextPrefix>₪&nbsp;</span>
                 <span matTextPrefix>₪&nbsp;</span>
                 @if (form.get('amount')?.hasError('required')) {
                 <mat-error>שדה חובה</mat-error>
@@ -52,7 +53,24 @@
         <!-- Expense Specific Fields -->
         @if (transactionType() === 'expense') {
         <div class="expense-section">
-            <div class="form-row">
+            <!-- Payment Method Toggle -->
+            <label>אופן תשלום:</label>
+            <div class="target-type-toggle">
+                <div class="target-type-selection">
+                    <div class="selection-card" [class.selected]="paymentMethod() === 'card'"
+                        (click)="onPaymentMethodChange('card')">
+                        <mat-icon>credit_card</mat-icon>
+                        <span>כרטיס אשראי</span>
+                    </div>
+                    <div class="selection-card" [class.selected]="paymentMethod() === 'account'"
+                        (click)="onPaymentMethodChange('account')">
+                        <mat-icon>payments</mat-icon>
+                        <span>מזומן / עו"ש</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row" style="margin-top: 1rem;">
                 <mat-form-field appearance="outline" class="full-width">
                     <mat-label>תקציב</mat-label>
                     <mat-select formControlName="budgetId">
@@ -71,6 +89,7 @@
             </div>
 
             <div class="form-row">
+                @if (paymentMethod() === 'card') {
                 <mat-form-field appearance="outline" class="full-width">
                     <mat-label>כרטיס אשראי לחיוב</mat-label>
                     <mat-select formControlName="creditCardId">
@@ -84,6 +103,21 @@
                     <mat-error>חובה לשייך לכרטיס אשראי</mat-error>
                     }
                 </mat-form-field>
+                } @else {
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>חשבון לחיוב</mat-label>
+                    <mat-select formControlName="paymentAccountId">
+                        @for (account of data.accounts; track account.id) {
+                        <mat-option [value]="account.id">{{ account.name }}</mat-option>
+                        } @empty {
+                        <mat-option disabled>אין חשבונות פעילים</mat-option>
+                        }
+                    </mat-select>
+                    @if (form.get('paymentAccountId')?.hasError('required')) {
+                    <mat-error>שדה חובה</mat-error>
+                    }
+                </mat-form-field>
+                }
             </div>
         </div>
         }

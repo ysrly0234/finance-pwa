@@ -8,7 +8,9 @@ export interface IExpense {
     description: string;
     executionDate: Date;
     budgetId: string; // Required: Every expense must be linked to a budget
-    creditCardId: string; // Required: Every expense must be linked to a credit card
+    paymentMethod: TransactionTargetType; // 'card' or 'account' (for cash/transfer)
+    creditCardId?: string; // Required if paymentMethod is 'card'
+    paymentAccountId?: string; // Required if paymentMethod is 'account'
 }
 
 export interface IIncome {

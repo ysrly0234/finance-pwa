@@ -38,7 +38,7 @@ export class BudgetFormComponent {
     cycleType: ['monthly', Validators.required],
     customValue: [1, [Validators.min(1), Validators.pattern('^[0-9]*$')]],
     customUnit: ['month'],
-    amount: [0, [Validators.required, Validators.min(0)]],
+    amount: [null as number | null, [Validators.required, Validators.min(0)]],
     isAccumulating: [false],
     importance: [null as 'high' | 'medium' | 'low' | null, Validators.required]
   });
@@ -86,7 +86,7 @@ export class BudgetFormComponent {
           cycleType: 'monthly',
           customValue: 1,
           customUnit: 'month',
-          amount: 0,
+          amount: null,
           isAccumulating: false
         });
       }

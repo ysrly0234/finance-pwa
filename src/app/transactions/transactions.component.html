@@ -65,7 +65,11 @@
                             @if (isExpense(t)) {
                             <span class="source">{{ getBudgetName(getBudgetId(t)) }}</span>
                             <span class="separator">•</span>
-                            <span class="method">{{ getCardName(getCreditCardId(t)) }}</span>
+                            @if (getPaymentMethod(t) === 'account') {
+                            <span class="method">מזומן/עו"ש: {{ getAccountName(getPaymentAccountId(t)) }}</span>
+                            } @else {
+                            <span class="method">אשראי: {{ getCardName(getCreditCardId(t)) }}</span>
+                            }
                             } @else {
                             @if (getTargetType(t) === 'account') {
                             <span class="method">לחשבון: {{ getAccountName(getReceivingAccountId(t)) }}</span>
