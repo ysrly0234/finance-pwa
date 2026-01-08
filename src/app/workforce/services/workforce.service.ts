@@ -15,8 +15,9 @@ export class WorkforceService {
     ]);
 
     private employees = signal<Employee[]>([
-        { id: 'e1', empNumber: 'E001', deptNumber: '101', firstName: 'John', lastName: 'Doe' },
-        { id: 'e2', empNumber: 'E002', deptNumber: '101', firstName: 'Jane', lastName: 'Smith' },
+        { id: 'e1', empNumber: 'E001', deptNumber: '101', firstName: 'יוסי', lastName: 'כהן' },
+        { id: 'e2', empNumber: 'E002', deptNumber: '101', firstName: 'מאיר', lastName: 'ביטון' },
+        { id: 'e6', empNumber: 'E006', deptNumber: '101', firstName: 'חיים', lastName: 'נבון' },
         { id: 'e3', empNumber: 'E003', deptNumber: '102', firstName: 'Bob', lastName: 'Jones' },
         { id: 'e4', empNumber: 'E004', deptNumber: '102', firstName: 'Alice', lastName: 'Williams' },
         { id: 'e5', empNumber: 'E005', deptNumber: '103', firstName: 'Charlie', lastName: 'Brown' }
@@ -25,6 +26,7 @@ export class WorkforceService {
     private phones = signal<EmployeePhone[]>([
         { id: 'p1', empNumber: 'E001', phoneNumber: '555-0101', purpose: 'Primary' },
         { id: 'p2', empNumber: 'E002', phoneNumber: '555-0102', purpose: 'Primary' },
+        { id: 'p7', empNumber: 'E006', phoneNumber: '555-0106', purpose: 'Mobile' },
         { id: 'p3', empNumber: 'E003', phoneNumber: '555-0103', purpose: 'Primary' },
         { id: 'p4', empNumber: 'E003', phoneNumber: '555-0000', purpose: 'Mobile' },
         { id: 'p5', empNumber: 'E004', phoneNumber: '555-0104', purpose: 'Primary' },

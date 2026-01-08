@@ -1,0 +1,19 @@
+<div class="timeline-container" dir="rtl">
+    <div class="controls-group">
+        <mat-form-field appearance="outline" class="date-field" [subscriptSizing]="'dynamic'">
+            <mat-label>תאריך</mat-label>
+            <input matInput [matDatepicker]="picker" [ngModel]="date()" (ngModelChange)="onDateChange($event)">
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="time-field" [subscriptSizing]="'dynamic'">
+            <mat-label>שעה</mat-label>
+            <mat-select [ngModel]="selectedTime()" (selectionChange)="onTimeChange($event.value)">
+                <mat-option *ngFor="let t of timeSlots" [value]="t">
+                    {{ t }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+</div>

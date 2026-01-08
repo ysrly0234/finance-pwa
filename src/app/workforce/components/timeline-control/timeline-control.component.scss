@@ -1,0 +1,28 @@
+    .timeline-container {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .controls-group {
+        display: flex;
+        gap: 8px;
+        /* Tight gap */
+        align-items: center;
+    }
+
+    .date-field {
+        width: 160px;
+    }
+
+    .time-field {
+        width: 100px;
+        /* Minimal width for time */
+    }
+
+    /* Material override for cleaner look if needed */
+    ::ng-deep .time-field .mat-mdc-form-field-infix {
+        width: auto !important;
+    }
+
+    /* .info { color: #666; ... } removed */

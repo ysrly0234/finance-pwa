@@ -1,3 +1,14 @@
+:host {
+    display: block;
+    height: 100%;
+}
+
+.app-container {
+    height: 100%;
+    display: grid;
+    grid-template-rows: min-content auto;
+}
+
 .navbar {
     background-color: var(--surface-color);
     border-bottom: 1px solid var(--border-color);
@@ -42,8 +53,4 @@
 .nav-links a:hover,
 .nav-links a.active {
     color: var(--primary-color);
-}
-
-.main-content {
-    padding-top: var(--spacing-xl);
 }

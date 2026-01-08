@@ -11,51 +11,8 @@ import { MatNativeDateModule } from '@angular/material/core';
   selector: 'app-timeline-control',
   standalone: true,
   imports: [CommonModule, FormsModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatDatepickerModule, MatNativeDateModule],
-  template: `
-    <div class="timeline-container" dir="rtl">
-      <div class="controls-group">
-        <mat-form-field appearance="outline" class="date-field">
-          <mat-label>תאריך</mat-label>
-          <input matInput [matDatepicker]="picker" [ngModel]="date()" (ngModelChange)="onDateChange($event)">
-          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="time-field">
-            <mat-label>שעה</mat-label>
-            <mat-select [ngModel]="selectedTime()" (selectionChange)="onTimeChange($event.value)">
-                <mat-option *ngFor="let t of timeSlots" [value]="t">
-                    {{ t }}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-      </div>
-    </div>
-  `,
-  styles: [`
-    .timeline-container {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-    .controls-group {
-      display: flex;
-      gap: 8px; /* Tight gap */
-      align-items: center;
-    }
-    .date-field {
-        width: 160px;
-    }
-    .time-field {
-      width: 100px; /* Minimal width for time */
-    }
-    /* Material override for cleaner look if needed */
-    ::ng-deep .time-field .mat-mdc-form-field-infix {
-        width: auto !important;
-    }
-    
-    /* .info { color: #666; ... } removed */
-  `]
+  templateUrl: './timeline-control.component.html',
+  styleUrls: ['./timeline-control.component.scss']
 })
 export class TimelineControlComponent {
   date = model<Date>(new Date());

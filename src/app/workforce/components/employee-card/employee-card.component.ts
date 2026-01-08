@@ -51,7 +51,7 @@ import { MatChipsModule } from '@angular/material/chips';
 
         <!-- Backup List Section -->
         <div class="backup-list" *ngIf="activeBackups().length > 0; else noBackup">
-           <div class="section-label">מגבים פעילים עכשיו:</div>
+           <div class="section-label">מגבים פעילים:</div>
            <div class="backup-item" *ngFor="let b of activeBackups()">
                <div class="backup-row">
                    <mat-icon class="shield-icon">security</mat-icon>
