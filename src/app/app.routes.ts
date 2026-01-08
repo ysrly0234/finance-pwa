@@ -15,6 +15,7 @@ export const routes: Routes = [
     { path: 'accounts', component: AccountsComponent, canActivate: [authGuard] },
     { path: 'credit-cards', component: CreditCardsComponent, canActivate: [authGuard] },
     { path: 'transactions', component: TransactionsComponent, canActivate: [authGuard] },
+    { path: 'workforce', loadComponent: () => import('./workforce/workforce-manager/workforce-manager.component').then(m => m.WorkforceManagerComponent), canActivate: [authGuard] },
     { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
     { path: 'auth/login', component: LoginComponent },
     { path: 'auth/register', component: RegisterComponent },
