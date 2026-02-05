@@ -14,4 +14,11 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import './commands'
+import './commands';
+import { slowCypressDown } from 'cypress-slow-down';
+
+// Get the delay from Cypress environment settings
+const delay = Cypress.env('e2eDelay') || 0;
+if (delay > 0) {
+    slowCypressDown(delay);
+}
