@@ -6,6 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MockAuthService } from '../../../shared/services/mock-auth.service';
 
 @Component({
@@ -18,7 +19,8 @@ import { MockAuthService } from '../../../shared/services/mock-auth.service';
         MatCardModule,
         MatFormFieldModule,
         MatInputModule,
-        MatButtonModule
+        MatButtonModule,
+        MatIconModule
     ],
     templateUrl: './register.component.html',
     styleUrl: './register.component.scss'
@@ -35,6 +37,11 @@ export class RegisterComponent {
     });
 
     errorMsg = signal<string | null>(null);
+    hidePassword = signal(true);
+
+    togglePasswordVisibility() {
+        this.hidePassword.update(v => !v);
+    }
 
     onSubmit() {
         if (this.registerForm.valid) {

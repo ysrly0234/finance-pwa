@@ -22,7 +22,10 @@
                 <div class="form-row">
                     <mat-form-field appearance="outline" class="full-width">
                         <mat-label>סיסמה</mat-label>
-                        <input matInput type="password" formControlName="password" required>
+                        <input matInput [type]="hidePassword() ? 'password' : 'text'" formControlName="password" required>
+                        <button mat-icon-button matSuffix (click)="togglePasswordVisibility(); $event.preventDefault()" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword()">
+                            <mat-icon>{{hidePassword() ? 'visibility_off' : 'visibility'}}</mat-icon>
+                        </button>
                         @if (loginForm.get('password')?.hasError('required')) {
                         <mat-error>שדה חובה</mat-error>
                         }
