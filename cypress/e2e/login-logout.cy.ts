@@ -3,7 +3,7 @@ describe('Authentication Flow (Register -> Login -> Logout)', () => {
   const password = 'ysrly0234';
   const firstName = 'Test User';
 
-  it('should register a new user, logout, and ثم login successfully', () => {
+  it('should register a new user, logout, and login successfully', () => {
     // 1. Visit the system and go to register
     cy.visit('http://localhost:4210/auth/register');
 
